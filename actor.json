@@ -1,0 +1,181 @@
+[
+    {
+        "name": "Vijay Radio",
+        "url": "https://stream.zeno.fm/3w6g61p7pa0uv",
+        "url_resolved": "https://stream.zeno.fm/3w6g61p7pa0uv",
+        "favicon": "http://tamilfmradios.com/images/vijayradio.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Dhanush Radio",
+        "url": "https://stream.zeno.fm/kxq01bv7hqzuv",
+        "url_resolved": "https://stream.zeno.fm/kxq01bv7hqzuv",
+        "favicon": "http://tamilfmradios.com/images/dhanush.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Ilayaraja HQ FM",
+        "url": "http://server.geetradio.com:8100/radio.mp3",
+        "url_resolved": "http://server.geetradio.com:8100/radio.mp3",
+        "favicon": "http://tamilfmradios.com/images/ilayarajaradio1.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "ARR Radio",
+        "url": "https://stream.zeno.fm/4v796nzz09zuv",
+        "url_resolved": "https://stream.zeno.fm/4v796nzz09zuv",
+        "favicon": "http://tamilfmradios.com/images/arrradio.webp",
+        "codec": "MP3",
+        "tags": "music,artist"
+    },
+    {
+        "name": "Rajini Radio",
+        "url": "http://stream.zeno.fm/g20bs7hu0uhvv",
+        "url_resolved": "http://stream.zeno.fm/g20bs7hu0uhvv",
+        "favicon": "",
+        "codec": "MP3",
+        "tags": "Music,Artist"
+    },
+    {
+        "name": "Old Gold Radio",
+        "url": "http://live.tamilkuyilradio.com:8002/oldgoldradio",
+        "url_resolved": "http://live.tamilkuyilradio.com:8002/oldgoldradio",
+        "favicon": "http://tamilfmradios.com/images/oldgoldradio.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Thenral World Radio",
+        "url": "https://thenralw.radioca.st/LiveStream;",
+        "url_resolved": "https://thenralw.radioca.st/LiveStream;",
+        "favicon": "http://tamilfmradios.com/images/thendralfm.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "MOP FM Chennai",
+        "url": "http://streamasiacdn.atc-labs.com/mopfmchennai.aac",
+        "url_resolved": "http://streamasiacdn.atc-labs.com/mopfmchennai.aac",
+        "favicon": "http://tamilfmradios.com/images/mopcrs.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "SCSDOR Radio",
+        "url": "https://rdopanel.cobrasoftwares.org:1120/;",
+        "url_resolved": "https://rdopanel.cobrasoftwares.org:1120/;",
+        "favicon": "http://tamilfmradios.com/images/scsdo1.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Sivan Kovil Bakthi Malargal",
+        "url": "http://sivankovil.no-ip.org:8000/;",
+        "url_resolved": "http://sivankovil.no-ip.org:8000/;",
+        "favicon": "http://tamilfmradios.com/images/sivankovilfm.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "OM Radio",
+        "url": "http://playerservices.streamtheworld.com/api/livestream-redirect/OMRADIO_S01AAC_SC",
+        "url_resolved": "http://playerservices.streamtheworld.com/api/livestream-redirect/OMRADIO_S01AAC_SC",
+        "favicon": "http://tamilfmradios.com/images/omradio.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Divyavani Sanskrit Radio",
+        "url": "http://epsilon.shoutca.st:8070/autodj",
+        "url_resolved": "http://epsilon.shoutca.st:8070/autodj",
+        "favicon": "http://tamilfmradios.com/images/divyavani.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Tamil Sun FM",
+        "url": "http://192.99.4.210:3596/;",
+        "url_resolved": "http://192.99.4.210:3596/;",
+        "favicon": "http://tamilfmradios.com/images/tamilsunfm.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "A9 Radio",
+        "url": "http://195.154.217.103:8175/stream",
+        "url_resolved": "http://195.154.217.103:8175/stream",
+        "favicon": "http://tamilfmradios.com/images/a9radio.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "80S Hit Songs",
+        "url": "https://stream.zeno.fm/48w230kx8vzuv",
+        "url_resolved": "https://stream.zeno.fm/48w230kx8vzuv",
+        "favicon": "http://tamilfmradios.com/images/hitsong80.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Radio V",
+        "url": "https://stream.zeno.fm/c459zuz35rquv",
+        "url_resolved": "https://stream.zeno.fm/c459zuz35rquv",
+        "favicon": "http://tamilfmradios.com/images/radiov.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Mirchi FM Chennai",
+        "url": "http://radiosindia.net/radiomirchitamil.mp3",
+        "url_resolved": "http://radiosindia.net/radiomirchitamil.mp3",
+        "favicon": "http://TAMILFM.com/images/radiomirchi.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Hello FM",
+        "url": "http://radiosindia.net/hellofm.mp3",
+        "url_resolved": "http://radiosindia.net/hellofm.mp3",
+        "favicon": "http://TAMILFM.com/images/hellofm1.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Tamil 89.4 FM",
+        "url": "http://centova.aarenworld.com/proxy/894tamilfm/stream",
+        "url_resolved": "http://centova.aarenworld.com/proxy/894tamilfm/stream",
+        "favicon": "http://TAMILFM.com/images/tamilfm.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "SN FM Live",
+        "url": "http://radiosindia.net/snfm.mp3",
+        "url_resolved": "http://radiosindia.net/snfm.mp3",
+        "favicon": "http://TAMILFM.com/images/radiolive.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Velini FM",
+        "url": "https://stream.zeno.fm/w2v3m8bs01zuv",
+        "url_resolved": "https://stream.zeno.fm/w2v3m8bs01zuv",
+        "favicon": "http://TAMILFM.com/images/velinifm.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Vadivelu Comedy FM",
+        "url": "https://stream.zeno.fm/02n962ezyp8uv",
+        "url_resolved": "https://stream.zeno.fm/02n962ezyp8uv",
+        "favicon": "http://tamilfmradios.com/images/vadivelucomedy.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "SLBC Asia",
+        "url": "http://220.247.227.6:8000/Asiastream",
+        "url_resolved": "http://220.247.227.6:8000/Asiastream",
+        "favicon": "http://tamilfmradios.com/images/slbcasia.webp",
+        "codec": "MP3"
+    },
+    {
+        "name": "Polimer TV",
+        "url": "https://cdn-2.pishow.tv/live/1241/master.m3u8",
+        "url_resolved": "https://cdn-2.pishow.tv/live/1241/master.m3u8",
+        "favicon": "",
+        "codec": "HLS",
+        "tags": "television"
+    },
+    {
+        "name": "MN TV",
+        "url": "https://mntv.livebox.co.in/mntvhls/live.m3u8",
+        "url_resolved": "https://mntv.livebox.co.in/mntvhls/live.m3u8",
+        "favicon": "",
+        "codec": "HLS",
+        "tags": "television"
+    }
+]

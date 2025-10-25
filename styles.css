@@ -1,0 +1,246 @@
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+header p {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.controls {
+    max-width: 1200px;
+    margin: 0.5rem auto;
+    padding: 0 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#search {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    min-width: 150px;
+}
+
+.filter-toggle {
+    padding: 0.6rem 1rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.filter-toggle:hover, .filter-toggle:focus {
+    background: #5a6fd8;
+}
+
+.filters {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+    max-height: 50vh;
+    overflow-y: auto;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.filters.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.filters h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+#category-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto 1.5rem;
+    padding: 0 0.75rem;
+}
+
+.category {
+    margin-bottom: 2rem;
+}
+
+.category h2 {
+    color: #667eea;
+    border-bottom: 1px solid #667eea;
+    padding-bottom: 0.3rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.stations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.station-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.station-card:hover, .station-card:focus-within {
+    transform: translateY(-2px);
+}
+
+.station-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.station-favicon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    object-fit: cover;
+}
+
+.station-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.player-container {
+    margin-top: 0.75rem;
+}
+
+audio, video {
+    width: 100%;
+    outline: none;
+    border-radius: 4px;
+}
+
+audio::-webkit-media-controls-panel,
+video::-webkit-media-controls-panel {
+    background: #667eea;
+    color: white;
+}
+
+.station-tags {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1rem;
+    color: #666;
+    padding: 1.5rem;
+}
+
+footer {
+    text-align: center;
+    padding: 0.75rem;
+    background: #333;
+    color: white;
+    font-size: 0.85rem;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header p {
+        font-size: 0.8rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        padding: 0 0.5rem;
+    }
+
+    #search {
+        width: 100%;
+    }
+
+    .filter-toggle {
+        width: 100%;
+        text-align: center;
+    }
+
+    .stations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .station-card {
+        padding: 0.75rem;
+    }
+
+    .station-favicon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .station-name {
+        font-size: 0.95rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .station-card, .filter-toggle, .filters {
+        transition: none;
+    }
+}
