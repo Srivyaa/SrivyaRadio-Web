@@ -175,6 +175,9 @@
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .category-item:hover {
@@ -185,6 +188,10 @@
         .category-item.active {
             background-color: var(--primary-color);
             font-weight: bold;
+        }
+
+        .category-emoji {
+            font-size: 1.2rem;
         }
 
         .stations {
@@ -482,32 +489,58 @@
         // Base URL for the JSON files
         const BASE_URL = 'https://raw.githubusercontent.com/Srivyaa/RadioStations/main/data/';
         
-        // List of JSON files to fetch
-        const JSON_FILES = [
-            '80s.json',
-            '90s.json',
-            'Arabic.json',
-            'Blues.json',
-            'Bollywood.json',
-            'Classical.json',
-            'Country.json',
-            'Dance.json',
-            'Decades.json',
-            'Electronic.json',
-            'Folk.json',
-            'HipHop.json',
-            'Jazz.json',
-            'Latin.json',
-            'Metal.json',
-            'Pop.json',
-            'R&B.json',
-            'Reggae.json',
-            'Rock.json',
-            'Soul.json',
-            'Talk.json',
-            'Travel.json',
-            'Workout.json',
-            'World.json'
+        // Custom categories mapping based on the provided pairs
+        const CUSTOM_CATEGORIES = [
+            { displayName: "All_India_Radios 🇮🇳", fileName: "india.json" },
+            { displayName: "Actor_Radios 🎭", fileName: "actor.json" },
+            { displayName: "Ajith_Radios 🎬", fileName: "ajith.json" },
+            { displayName: "Amma_Radios 👵", fileName: "amma.json" },
+            { displayName: "Appa_Radios 👨‍👧‍👦", fileName: "appa.json" },
+            { displayName: "Arjun_Radios 🦁", fileName: "arjun.json" },
+            { displayName: "Captain_Radios 🕶️", fileName: "captain.json" },
+            { displayName: "Amman_Radio 🕉️", fileName: "amman.json" },
+            { displayName: "Artist_Radios 🎤", fileName: "artist.json" },
+            { displayName: "Christian_Radios ✝️", fileName: "CHRIST.json" },
+            { displayName: "Community_Radios 🏘️", fileName: "community.json" },
+            { displayName: "Classic_Radios 🎻", fileName: "classic.json" },
+            { displayName: "Deva_Radios 🎵", fileName: "deva.json" },
+            { displayName: "English_Radios 🇬🇧", fileName: "english.json" },
+            { displayName: "Ganapathy_Radios 🐘", fileName: "ganapathy.json" },
+            { displayName: "Hindu_Radio 🕉️", fileName: "hindu.json" },
+            { displayName: "Hindi_Radios 🇮🇳", fileName: "hindi.json" },
+            { displayName: "JR_Radios 🦸", fileName: "jr.json" },
+            { displayName: "Islam_Radios ☪️", fileName: "islam.json" },
+            { displayName: "Kamal_Radios 🎭", fileName: "kamal.json" },
+            { displayName: "Kids_Radios 👶", fileName: "kids.json" },
+            { displayName: "Kutties_Radios 👶", fileName: "kutties.json" },
+            { displayName: "Local_Radios 📍", fileName: "local.json" },
+            { displayName: "Local_TV ▶️", fileName: "localtv.json" },
+            { displayName: "MP3 🎵", fileName: "mp3.json" },
+            { displayName: "Music_Radio 🎵", fileName: "music.json" },
+            { displayName: "Manisharma_Radios 🎶", fileName: "manisharma.json" },
+            { displayName: "Mass_Radios 💥", fileName: "mass.json" },
+            { displayName: "Mohan_Radios 🎤", fileName: "mohan.json" },
+            { displayName: "Perumal_Songs 🕉️", fileName: "perumal.json" },
+            { displayName: "Pongal_Specials 🎉", fileName: "pongal.json" },
+            { displayName: "Prasanth_Radios 🎵", fileName: "prasanth.json" },
+            { displayName: "Prithishaa_Radios 🌟", fileName: "prithishaa.json" },
+            { displayName: "Rajini_Radios 👑", fileName: "rajini.json" },
+            { displayName: "Ramarajan_Radios 🎤", fileName: "ramarajan.json" },
+            { displayName: "SA Rajkumar_Radios 🎭", fileName: "sarajkumar.json" },
+            { displayName: "Sirpy_Radios 🎵", fileName: "sirpy.json" },
+            { displayName: "SV_Sekar_Dramas 🎭", fileName: "svs.json" },
+            { displayName: "Tamil_FM_Radios 🇮🇳", fileName: "tamilfm.json" },
+            { displayName: "Tamil_TV_Channels 📺", fileName: "tamiltv.json" },
+            { displayName: "Tamil_Talk_Radios 💬", fileName: "tamiltalk.json" },
+            { displayName: "TMS_Murugan_Songs 🕉️", fileName: "tms.json" },
+            { displayName: "TR_Hits_Radios 🔥", fileName: "trhits.json" },
+            { displayName: "TV_Serials 🎵", fileName: "serials.json" },
+            { displayName: "Unplugged_Radios 🎸", fileName: "unplugged.json" },
+            { displayName: "Vikram_Radios 🦹", fileName: "vikram.json" },
+            { displayName: "🏹 Mahabharat_Radios", fileName: "mahabharat.json" },
+            { displayName: "▶️ YouTube", fileName: "youtube.json" },
+            { displayName: "🇮🇳 India", fileName: "in.json" },
+            { displayName: "🇮🇪 Ireland", fileName: "ie.json" }
         ];
 
         // Global state
@@ -549,34 +582,31 @@
             setupEventListeners();
         }
 
-        // Load all categories from JSON files
+        // Load all categories from the custom mapping
         async function loadCategories() {
             try {
                 categoryList.innerHTML = '<li class="loading">Loading categories...</li>';
                 
-                const categories = JSON_FILES.map(file => {
-                    const name = file.replace('.json', '');
+                // Use the custom categories mapping
+                state.categories = CUSTOM_CATEGORIES.map(cat => {
+                    // Extract emoji and name
+                    const parts = cat.displayName.split(' ');
+                    const emoji = parts[parts.length - 1];
+                    const name = parts.slice(0, -1).join(' ') || cat.displayName;
+                    
                     return {
                         name: name,
-                        file: file,
-                        displayName: formatCategoryName(name)
+                        fileName: cat.fileName,
+                        displayName: cat.displayName,
+                        emoji: emoji
                     };
                 });
 
-                state.categories = categories;
                 renderCategories();
             } catch (error) {
                 console.error('Error loading categories:', error);
                 categoryList.innerHTML = '<li class="error">Failed to load categories</li>';
             }
-        }
-
-        // Format category name for display
-        function formatCategoryName(name) {
-            return name
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, str => str.toUpperCase())
-                .trim();
         }
 
         // Render categories in the UI
@@ -589,7 +619,20 @@
                 if (state.currentCategory && state.currentCategory.name === category.name) {
                     li.classList.add('active');
                 }
-                li.textContent = category.displayName;
+                
+                // Add emoji if available
+                if (category.emoji) {
+                    const emojiSpan = document.createElement('span');
+                    emojiSpan.className = 'category-emoji';
+                    emojiSpan.textContent = category.emoji;
+                    li.appendChild(emojiSpan);
+                }
+                
+                // Add category name
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = category.name;
+                li.appendChild(nameSpan);
+                
                 li.addEventListener('click', () => selectCategory(category));
                 categoryList.appendChild(li);
             });
@@ -609,7 +652,10 @@
             stationList.innerHTML = '<li class="loading">Loading stations...</li>';
             
             try {
-                const response = await fetch(`${BASE_URL}${category.file}`);
+                const response = await fetch(`${BASE_URL}${category.fileName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 
                 // Extract stations from the JSON structure
