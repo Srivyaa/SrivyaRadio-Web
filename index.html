@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adaptive Radio Player</title>
+    <title>SrivyaRadio - Adaptive Radio Player</title>
     <style>
         :root {
             --primary-color: #3498db;
@@ -12,6 +12,7 @@
             --light-color: #ecf0f1;
             --success-color: #2ecc71;
             --danger-color: #e74c3c;
+            --warning-color: #f39c12;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -35,22 +36,104 @@
         }
 
         header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 30px;
             padding: 20px;
             background-color: rgba(44, 62, 80, 0.8);
             border-radius: 10px;
             box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .description {
             font-size: 1.1rem;
             opacity: 0.9;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: none;
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            color: var(--dark-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
         }
 
         .main-content {
@@ -114,10 +197,22 @@
             overflow-y: auto;
         }
 
-        .stations h2 {
+        .stations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid var(--primary-color);
+        }
+
+        .stations h2 {
+            margin: 0;
+        }
+
+        .station-count {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         .station-list {
@@ -277,6 +372,13 @@
             font-size: 1.2rem;
         }
 
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: var(--warning-color);
+            font-size: 1.2rem;
+        }
+
         footer {
             text-align: center;
             margin-top: 30px;
@@ -284,13 +386,36 @@
             opacity: 0.8;
             font-size: 0.9rem;
         }
+
+        /* Search results styling */
+        .search-highlight {
+            background-color: var(--warning-color);
+            color: var(--dark-color);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Adaptive Radio Player</h1>
-            <p class="description">Browse and listen to radio stations from around the world</p>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/Srivyaa/RadioStations-old/main/ic_radiologo.png" alt="SrivyaRadio Logo">
+                </div>
+                <div class="brand-text">
+                    <h1>SrivyaRadio</h1>
+                    <p class="description">Browse and listen to radio stations from around the world</p>
+                </div>
+            </div>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search for stations...">
+                    <button class="search-btn" id="searchBtn">
+                        🔍
+                    </button>
+                </div>
+            </div>
         </header>
 
         <div class="main-content">
@@ -302,7 +427,10 @@
             </div>
 
             <div class="stations">
-                <h2>Stations</h2>
+                <div class="stations-header">
+                    <h2>Stations</h2>
+                    <div class="station-count" id="stationCount">Select a category</div>
+                </div>
                 <ul class="station-list" id="stationList">
                     <li class="loading">Select a category to view stations</li>
                 </ul>
@@ -386,6 +514,7 @@
         const state = {
             categories: [],
             stations: [],
+            allStations: [],
             currentCategory: null,
             currentStation: null,
             audio: new Audio(),
@@ -393,12 +522,15 @@
             isShuffled: false,
             isLooped: false,
             volume: 0.5,
-            currentStationIndex: -1
+            currentStationIndex: -1,
+            searchQuery: '',
+            isSearching: false
         };
 
         // DOM elements
         const categoryList = document.getElementById('categoryList');
         const stationList = document.getElementById('stationList');
+        const stationCount = document.getElementById('stationCount');
         const stationImage = document.querySelector('.station-image');
         const stationTitle = document.querySelector('.station-title');
         const stationCategory = document.querySelector('.station-category');
@@ -408,6 +540,8 @@
         const shuffleBtn = document.querySelector('.shuffle');
         const loopBtn = document.querySelector('.loop');
         const volumeSlider = document.getElementById('volumeSlider');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
 
         // Initialize the app
         async function init() {
@@ -466,6 +600,9 @@
             state.currentCategory = category;
             state.currentStation = null;
             state.currentStationIndex = -1;
+            state.isSearching = false;
+            state.searchQuery = '';
+            searchInput.value = '';
             
             // Update UI
             renderCategories();
@@ -477,13 +614,16 @@
                 
                 // Extract stations from the JSON structure
                 state.stations = Array.isArray(data) ? data : (data.stations || []);
+                state.allStations = [...state.stations];
                 
                 // Reset player UI
                 resetPlayer();
                 renderStations();
+                updateStationCount();
             } catch (error) {
                 console.error(`Error loading stations for ${category.name}:`, error);
                 stationList.innerHTML = '<li class="error">Failed to load stations</li>';
+                stationCount.textContent = 'Error loading stations';
             }
         }
 
@@ -492,7 +632,11 @@
             stationList.innerHTML = '';
             
             if (state.stations.length === 0) {
-                stationList.innerHTML = '<li class="error">No stations available</li>';
+                if (state.isSearching) {
+                    stationList.innerHTML = '<li class="no-results">No stations found for your search</li>';
+                } else {
+                    stationList.innerHTML = '<li class="error">No stations available</li>';
+                }
                 return;
             }
             
@@ -508,7 +652,13 @@
                 
                 const nameDiv = document.createElement('div');
                 nameDiv.className = 'station-name';
-                nameDiv.textContent = station.name || 'Unknown Station';
+                
+                // Highlight search terms if searching
+                if (state.isSearching && state.searchQuery) {
+                    nameDiv.innerHTML = highlightSearchTerms(station.name, state.searchQuery);
+                } else {
+                    nameDiv.textContent = station.name || 'Unknown Station';
+                }
                 
                 const tagsDiv = document.createElement('div');
                 tagsDiv.className = 'station-tags';
@@ -519,7 +669,12 @@
                 if (station.language) tags.push(station.language);
                 if (station.country) tags.push(station.country);
                 
-                tagsDiv.textContent = tags.join(' • ');
+                // Highlight search terms in tags if searching
+                if (state.isSearching && state.searchQuery) {
+                    tagsDiv.innerHTML = tags.map(tag => highlightSearchTerms(tag, state.searchQuery)).join(' • ');
+                } else {
+                    tagsDiv.textContent = tags.join(' • ');
+                }
                 
                 stationInfo.appendChild(nameDiv);
                 stationInfo.appendChild(tagsDiv);
@@ -528,6 +683,50 @@
                 li.addEventListener('click', () => selectStation(index));
                 stationList.appendChild(li);
             });
+        }
+
+        // Highlight search terms in text
+        function highlightSearchTerms(text, query) {
+            if (!text || !query) return text;
+            
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        // Update station count display
+        function updateStationCount() {
+            if (state.isSearching) {
+                stationCount.textContent = `${state.stations.length} of ${state.allStations.length} stations`;
+            } else {
+                stationCount.textContent = `${state.stations.length} stations`;
+            }
+        }
+
+        // Perform search across all stations
+        function performSearch(query) {
+            state.searchQuery = query.trim().toLowerCase();
+            state.isSearching = state.searchQuery.length > 0;
+            
+            if (!state.isSearching) {
+                // Reset to show all stations
+                state.stations = [...state.allStations];
+            } else {
+                // Filter stations based on search query
+                state.stations = state.allStations.filter(station => {
+                    const name = (station.name || '').toLowerCase();
+                    const genre = (station.genre || '').toLowerCase();
+                    const language = (station.language || '').toLowerCase();
+                    const country = (station.country || '').toLowerCase();
+                    
+                    return name.includes(state.searchQuery) || 
+                           genre.includes(state.searchQuery) || 
+                           language.includes(state.searchQuery) || 
+                           country.includes(state.searchQuery);
+                });
+            }
+            
+            renderStations();
+            updateStationCount();
         }
 
         // Select a station to play
@@ -698,6 +897,26 @@
             
             // Volume control
             volumeSlider.addEventListener('input', updateVolume);
+            
+            // Search functionality
+            searchBtn.addEventListener('click', () => {
+                performSearch(searchInput.value);
+            });
+            
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch(searchInput.value);
+                }
+            });
+            
+            // Real-time search as user types (with debounce)
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(searchInput.value);
+                }, 300);
+            });
             
             // Audio events
             state.audio.addEventListener('ended', () => {
