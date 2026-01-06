@@ -89,9 +89,29 @@
                         <option value="favorites">❤️ Favorites</option>
                     </select>
                 </div>
+                <!-- Category Dropdown for Mobile -->
+                <select id="categoryDropdown" class="category-dropdown" aria-label="Select category">
+                    <!-- Options loaded dynamically -->
+                </select>
                 <ul class="category-list" id="categoryList" role="listbox" aria-label="Radio categories">
                     <!-- Categories loaded dynamically -->
                 </ul>
+                <!-- Favorites Accordion -->
+                <div class="favorites-accordion" id="favoritesAccordion">
+                    <div class="favorites-header" id="favoritesHeader">
+                        <h3>❤️ <span id="favoritesTitle">Favorites</span> <span class="category-count"
+                                id="favoritesCount">0</span></h3>
+                        <button class="favorites-toggle" id="favoritesToggle" aria-label="Toggle favorites">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="favorites-content" id="favoritesContent">
+                        <!-- Favorites loaded dynamically -->
+                    </div>
+                </div>
             </aside>
 
             <section class="stations-section">
@@ -229,6 +249,41 @@
                     target="_blank" rel="noopener">Srivyaa/RadioStations</a></p>
         </footer>
     </div>
+
+    <!-- Audio Visualizer -->
+    <div class="visualizer-overlay" id="visualizerOverlay">
+        <div class="visualizer-container">
+            <div class="visualizer-header">
+                <h2>🎵 Audio Visualizer</h2>
+                <div class="visualizer-controls">
+                    <select id="visualizerStyle" class="visualizer-select">
+                        <option value="bars">Bars</option>
+                        <option value="wave">Wave</option>
+                        <option value="circular">Circular</option>
+                        <option value="radial">Radial</option>
+                        <option value="particles">Particles</option>
+                    </select>
+                    <button class="visualizer-btn" id="visualizerCloseBtn" aria-label="Close visualizer">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <canvas id="visualizerCanvas"></canvas>
+        </div>
+    </div>
+
+    <!-- Visualizer Toggle Button -->
+    <button class="visualizer-toggle-btn" id="visualizerToggleBtn" aria-label="Toggle visualizer"
+        title="Toggle visualizer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+    </button>
 
     <audio id="audioPlayer" preload="none"></audio>
     <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>

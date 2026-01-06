@@ -400,6 +400,283 @@ input:focus:not(:focus-visible) {
     font-size: 1.2rem;
 }
 
+/* Category Dropdown for Mobile */
+.category-dropdown {
+    display: none;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='var(--primary-color)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+}
+
+.category-dropdown:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.category-dropdown option {
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Favorites Accordion */
+.favorites-accordion {
+    margin-top: 1rem;
+    border-top: 2px solid var(--primary-color);
+    padding-top: 1rem;
+}
+
+.favorites-accordion.hidden {
+    display: none;
+}
+
+.favorites-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.favorites-header:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.favorites-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.favorites-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: transform var(--transition-fast);
+}
+
+.favorites-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+.favorites-toggle.expanded {
+    transform: rotate(180deg);
+}
+
+.favorites-content {
+    display: none;
+    padding: 0.5rem 0;
+}
+
+.favorites-content.expanded {
+    display: block;
+}
+
+.favorite-station-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.favorite-station-item:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.favorite-station-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.favorite-station-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.favorite-station-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.favorite-station-category {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.favorite-station-item.active .favorite-station-category {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.favorite-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.favorite-action-btn {
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-sm);
+}
+
+.favorite-action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--primary-color);
+}
+
+.favorite-action-btn.remove-fav {
+    color: var(--danger-color);
+}
+
+.favorite-action-btn.remove-fav:hover {
+    background: rgba(231, 76, 60, 0.2);
+    color: var(--danger-color);
+}
+
+.no-favorites {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Audio Visualizer */
+.visualizer-toggle-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    z-index: 99;
+}
+
+.visualizer-toggle-btn:hover {
+    transform: scale(1.1);
+    background: var(--primary-dark);
+}
+
+.visualizer-toggle-btn.active {
+    background: var(--secondary-color);
+}
+
+.visualizer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.visualizer-overlay.active {
+    display: flex;
+}
+
+.visualizer-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.visualizer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.visualizer-header h2 {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.visualizer-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.visualizer-select {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.visualizer-select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.visualizer-btn {
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.visualizer-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#visualizerCanvas {
+    flex: 1;
+    width: 100%;
+}
+
 /* Stations Section */
 .stations-section {
     flex: 1;
@@ -894,8 +1171,11 @@ input:focus:not(:focus-visible) {
     }
 
     .category-list {
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: none;
+    }
+
+    .category-dropdown {
+        display: block;
     }
 
     .category-item {
