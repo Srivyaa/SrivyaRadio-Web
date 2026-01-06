@@ -1108,6 +1108,7 @@
         try {
             // Check if already initialized with a source
             if (state.source) {
+                // Resume context if needed
                 if (state.audioContext.state === 'suspended') {
                     state.audioContext.resume();
                 }
@@ -1115,7 +1116,14 @@
             }
 
             // Create audio context
-            state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            state.audioContext = new AudioContext();
+
+            // Resume context if suspended (required for autoplay policy)
+            if (state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
+            }
+
             state.analyser = state.audioContext.createAnalyser();
             state.analyser.fftSize = 256;
             state.analyser.smoothingTimeConstant = 0.8;
@@ -1123,6 +1131,9 @@
 
             // Create source from audio element - can only be done once!
             state.source = state.audioContext.createMediaElementSource(state.audio);
+
+            // Connect source -> analyser -> destination
+            // This allows both visualization AND audio playback
             state.source.connect(state.analyser);
             state.analyser.connect(state.audioContext.destination);
 
@@ -1142,18 +1153,25 @@
         }
 
         // Resume audio context if suspended
-        if (state.audioContext.state === 'suspended') {
-            state.audioContext.resume().catch(err => {
-                console.error('Failed to resume audio context:', err);
-            });
-        }
+        const resumeContext = async () => {
+            if (state.audioContext.state === 'suspended') {
+                try {
+                    await state.audioContext.resume();
+                } catch (err) {
+                    console.error('Failed to resume audio context:', err);
+                }
+            }
+        };
 
-        // Make sure audio is playing
-        if (state.audio.paused) {
-            state.audio.play().catch(err => {
-                console.error('Failed to resume audio:', err);
-            });
-        }
+        // Resume context and ensure audio is playing
+        resumeContext().then(() => {
+            // Make sure audio is playing if it should be
+            if (state.isPlaying && state.audio.paused) {
+                state.audio.play().catch(err => {
+                    console.error('Failed to resume audio:', err);
+                });
+            }
+        });
 
         // Set up canvas
         elements.visualizerCanvas.width = elements.visualizerCanvas.offsetWidth;

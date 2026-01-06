@@ -1158,7 +1158,7 @@ input:focus:not(:focus-visible) {
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .main-content {
         flex-direction: column;
     }
@@ -1224,6 +1224,10 @@ input:focus:not(:focus-visible) {
 
     .volume-slider {
         width: 70px;
+    }
+
+    .language-select {
+        display: none;
     }
 
     .seekbar-container {
