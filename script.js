@@ -565,7 +565,7 @@
 
     // ==================== Search Functions ====================
     function performSearch(query) {
-        state.searchQuery = query.trim().toLowerCase();
+        state.searchQuery = query.trim();
         state.isSearching = state.searchQuery.length > 0;
 
         if (!state.isSearching) {
@@ -577,19 +577,17 @@
         } else {
             const stationsToSearch = state.isGlobalSearch ? state.globalStations : state.allStations;
 
-            state.stations = stationsToSearch.filter(station => {
-                const name = (station.name || '').toLowerCase();
-                const genre = (station.genre || '').toLowerCase();
-                const language = (station.language || '').toLowerCase();
-                const country = (station.country || '').toLowerCase();
-                const category = (station._category || '').toLowerCase();
-
-                return name.includes(state.searchQuery) ||
-                    genre.includes(state.searchQuery) ||
-                    language.includes(state.searchQuery) ||
-                    country.includes(state.searchQuery) ||
-                    category.includes(state.searchQuery);
+            // Use Fuse.js for fuzzy search
+            const fuse = new Fuse(stationsToSearch, {
+                keys: ['name', 'genre', 'language', 'country', '_category'],
+                threshold: 0.3,
+                includeScore: true,
+                includeMatches: true,
+                minMatchCharLength: 2
             });
+
+            const results = fuse.search(state.searchQuery);
+            state.stations = results.map(result => result.item);
         }
 
         renderStations();
