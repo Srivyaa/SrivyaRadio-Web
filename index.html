@@ -26,7 +26,8 @@
                     </div>
                     <div class="brand-text">
                         <h1>SrivyaRadio</h1>
-                        <p class="description">Browse and listen to radio stations from around the world</p>
+                        <p class="description" id="headerDescription">Browse and listen to radio stations from around
+                            the world</p>
                     </div>
                 </div>
 
@@ -44,6 +45,11 @@
                             </button>
                         </div>
                     </div>
+
+                    <select id="languageSelect" class="language-select" aria-label="Select language">
+                        <option value="en">English</option>
+                        <option value="ta">தமிழ்</option>
+                    </select>
 
                     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"
                         title="Toggle dark mode">
@@ -71,13 +77,13 @@
         <main class="main-content">
             <aside class="categories-panel">
                 <div class="panel-header">
-                    <h2>Categories</h2>
+                    <h2 id="categoriesTitle">Categories</h2>
                     <div class="panel-actions">
                         <span class="category-count" id="categoryCount">0</span>
                     </div>
                 </div>
                 <div class="sort-container">
-                    <label for="categorySort" class="sort-label">Sort:</label>
+                    <label for="categorySort" class="sort-label" id="sortCategoryLabel">Sort:</label>
                     <select id="categorySort" class="sort-select">
                         <option value="alpha">A-Z</option>
                         <option value="favorites">❤️ Favorites</option>
@@ -219,8 +225,8 @@
         </div>
 
         <footer class="main-footer">
-            <p>Radio data sourced from <a href="https://github.com/Srivyaa/RadioStations" target="_blank"
-                    rel="noopener">Srivyaa/RadioStations</a></p>
+            <p id="footerText">Radio data sourced from <a href="https://github.com/Srivyaa/RadioStations"
+                    target="_blank" rel="noopener">Srivyaa/RadioStations</a></p>
         </footer>
     </div>
 

@@ -13,6 +13,7 @@
             FAVORITES: 'srivya_favorites',
             HISTORY: 'srivya_history',
             THEME: 'srivya_theme',
+            LANGUAGE: 'srivya_language',
             LAST_PLAYED: 'srivya_last_played',
             VOLUME: 'srivya_volume',
             PLAY_COUNTS: 'srivya_play_counts',
@@ -25,6 +26,126 @@
             ALPHABETICAL: 'alpha',
             FAVORITES: 'favorites',
             PLAY_COUNT: 'playcount'
+        }
+    };
+
+    // ==================== Translations ====================
+    const TRANSLATIONS = {
+        en: {
+            // Header
+            headerDescription: 'Browse and listen to radio stations from around the world',
+
+            // Categories
+            categoriesTitle: 'Categories',
+            sortCategoryLabel: 'Sort:',
+
+            // Stations
+            stationsTitle: 'Stations',
+            stationCountSelect: 'Select a category',
+            stationCountFavorites: 'favorites',
+            stationCountSearching: 'of stations',
+            stationCountAll: 'stations from all categories',
+            stationCount: 'stations',
+            noFavorites: 'No favorite stations yet. Add some from the list!',
+            noResults: 'No stations found for your search',
+            noStations: 'No stations available',
+
+            // Player
+            noStationSelected: 'No station selected',
+            selectStation: 'Select a station to start listening',
+
+            // Footer
+            footerText: 'Radio data sourced from',
+
+            // Search
+            searchPlaceholder: 'Search stations...',
+
+            // Sort options
+            sortAZ: 'A-Z',
+            sortFavorites: '❤️ Favorites',
+            sortMostPlayed: '🔊 Most Played',
+
+            // Station info
+            unknownStation: 'Unknown Station',
+            unknownCategory: 'Unknown Category',
+            selectCategory: 'Select a category',
+
+            // Accessibility
+            ariaPlay: 'Play',
+            ariaPause: 'Pause',
+            ariaPrevious: 'Previous',
+            ariaNext: 'Next',
+            ariaShuffle: 'Shuffle',
+            ariaLoop: 'Loop',
+            ariaAddFavorites: 'Add to favorites',
+            ariaRemoveFavorites: 'Remove from favorites',
+            ariaSearch: 'Search',
+            ariaToggleDarkMode: 'Toggle dark mode',
+            ariaVolume: 'Volume',
+            ariaMute: 'Mute',
+            ariaUnmute: 'Unmute',
+            ariaShowFavorites: 'Show favorites',
+            ariaRadioCategories: 'Radio categories',
+            ariaRadioStations: 'Radio stations',
+            ariaSelectLanguage: 'Select language'
+        },
+        ta: {
+            // Header
+            headerDescription: 'உலகம் முழுவதிலிருந்தும் வானொலி நிலையங்களை உலாவி கேளுங்கள்',
+
+            // Categories
+            categoriesTitle: 'பகுப்புகள்',
+            sortCategoryLabel: 'வரிசை:',
+
+            // Stations
+            stationsTitle: 'நிலையங்கள்',
+            stationCountSelect: 'ஒரு பகுப்பைத் தேர்ந்தெடுக்கவும்',
+            stationCountFavorites: 'பிடித்தவை',
+            stationCountSearching: 'நிலையங்களில்',
+            stationCountAll: 'எல்லா பகுப்புகளிலிருந்தும் நிலையங்கள்',
+            stationCount: 'நிலையங்கள்',
+            noFavorites: 'இன்னும் எந்த பிடித்த நிலையங்களும் இல்லை. பட்டியலிலிருந்து சேர்க்கவும்!',
+            noResults: 'உங்கள் தேடலுக்கு எந்த நிலையங்களும் கிடைக்கவில்லை',
+            noStations: 'எந்த நிலையங்களும் இல்லை',
+
+            // Player
+            noStationSelected: 'நிலையம் தேர்ந்தெடுக்கப்படவில்லை',
+            selectStation: 'கேட்க ஒரு நிலையத்தைத் தேர்ந்தெடுக்கவும்',
+
+            // Footer
+            footerText: 'வானொலி தரவு இங்கிருந்து பெறப்பட்டது',
+
+            // Search
+            searchPlaceholder: 'நிலையங்களைத் தேடு...',
+
+            // Sort options
+            sortAZ: 'அ-ஆ',
+            sortFavorites: '❤️ பிடித்தவை',
+            sortMostPlayed: '🔊 அதிகம் கேட்கப்பட்டவை',
+
+            // Station info
+            unknownStation: 'தெரியாத நிலையம்',
+            unknownCategory: 'தெரியாத பகுப்பு',
+            selectCategory: 'ஒரு பகுப்பைத் தேர்ந்தெடுக்கவும்',
+
+            // Accessibility
+            ariaPlay: 'இசைக்க',
+            ariaPause: 'நிறுத்து',
+            ariaPrevious: 'முந்தைய',
+            ariaNext: 'அடுத்த',
+            ariaShuffle: 'கலக்கு',
+            ariaLoop: 'மீண்டும்',
+            ariaAddFavorites: 'பிடித்தவைக்கு சேர்',
+            ariaRemoveFavorites: 'பிடித்தவைகளிலிருந்து நீக்கு',
+            ariaSearch: 'தேடு',
+            ariaToggleDarkMode: 'இருள் பயன்முறையை மாற்று',
+            ariaVolume: 'ஒலியளவு',
+            ariaMute: 'ஒலியை நிறுத்து',
+            ariaUnmute: 'ஒலியை இயக்கு',
+            ariaShowFavorites: 'பிடித்தவைகளைக் காட்டு',
+            ariaRadioCategories: 'வானொலி பகுப்புகள்',
+            ariaRadioStations: 'வானொலி நிலையங்கள்',
+            ariaSelectLanguage: 'மொழியைத் தேர்ந்தெடுக்கவும்'
         }
     };
 
@@ -108,7 +229,8 @@
         playCounts: {},
         categorySort: 'alpha',
         stationSort: 'alpha',
-        categoriesWithFavorites: new Set()
+        categoriesWithFavorites: new Set(),
+        currentLanguage: 'en'
     };
 
     // ==================== DOM Elements ====================
@@ -123,6 +245,7 @@
         themeToggle: document.getElementById('themeToggle'),
         categorySortSelect: document.getElementById('categorySort'),
         stationSortSelect: document.getElementById('stationSort'),
+        languageSelect: document.getElementById('languageSelect'),
         stationImage: document.getElementById('stationImage'),
         stationTitle: document.getElementById('stationTitle'),
         stationMeta: document.getElementById('stationMeta'),
@@ -142,7 +265,11 @@
         durationEl: document.getElementById('duration'),
         favoritesBtn: document.getElementById('favoritesBtn'),
         audioPlayer: document.getElementById('audioPlayer'),
-        loadingSkeleton: document.getElementById('loadingSkeleton')
+        loadingSkeleton: document.getElementById('loadingSkeleton'),
+        headerDescription: document.getElementById('headerDescription'),
+        categoriesTitle: document.getElementById('categoriesTitle'),
+        sortCategoryLabel: document.getElementById('sortCategoryLabel'),
+        footerText: document.getElementById('footerText')
     };
 
     // ==================== Utility Functions ====================
@@ -185,6 +312,62 @@
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // ==================== Language Functions ====================
+    function t(key) {
+        const translations = TRANSLATIONS[state.currentLanguage] || TRANSLATIONS.en;
+        return translations[key] || key;
+    }
+
+    function changeLanguage(lang) {
+        if (!TRANSLATIONS[lang]) {
+            console.warn(`Language '${lang}' not supported, falling back to English`);
+            lang = 'en';
+        }
+
+        state.currentLanguage = lang;
+        saveToStorage(CONFIG.STORAGE_KEYS.LANGUAGE, lang);
+        applyTranslations();
+    }
+
+    function applyTranslations() {
+        // Header
+        elements.headerDescription.textContent = t('headerDescription');
+        elements.categoriesTitle.textContent = t('categoriesTitle');
+        elements.sortCategoryLabel.textContent = t('sortCategoryLabel');
+
+        // Stations title
+        elements.stationsTitle.textContent = t('stationsTitle');
+
+        // Search placeholder
+        elements.searchInput.placeholder = t('searchPlaceholder');
+
+        // Player
+        if (!state.currentStation) {
+            elements.stationTitle.textContent = t('noStationSelected');
+            elements.stationMeta.textContent = t('selectStation');
+        }
+
+        // Footer
+        elements.footerText.innerHTML = `${t('footerText')} <a href="https://github.com/Srivyaa/RadioStations" target="_blank" rel="noopener">Srivyaa/RadioStations</a>`;
+
+        // Sort options
+        if (elements.categorySortSelect) {
+            elements.categorySortSelect.options[0].text = t('sortAZ');
+            elements.categorySortSelect.options[1].text = t('sortFavorites');
+        }
+        if (elements.stationSortSelect) {
+            elements.stationSortSelect.options[0].text = t('sortAZ');
+            elements.stationSortSelect.options[1].text = t('sortFavorites');
+            elements.stationSortSelect.options[2].text = t('sortMostPlayed');
+        }
+
+        // Update station count text
+        updateStationCount();
+
+        // Update accessibility labels
+        elements.playPauseBtn.setAttribute('aria-label', t(state.isPlaying ? 'ariaPause' : 'ariaPlay'));
     }
 
     // ==================== Sort Functions ====================
@@ -382,8 +565,8 @@
                 updateStationCount();
             } catch (error) {
                 console.error(`Error loading stations for ${category.name}:`, error);
-                elements.stationList.innerHTML = '<li class="error">Failed to load stations. Please try again.</li>';
-                elements.stationCount.textContent = 'Error loading stations';
+                elements.stationList.innerHTML = `<li class="error">${t('noStations')}</li>`;
+                elements.stationCount.textContent = t('noStations');
             } finally {
                 hideLoadingSkeleton();
             }
@@ -424,8 +607,8 @@
             updateStationCount();
         } catch (error) {
             console.error('Error loading all categories:', error);
-            elements.stationList.innerHTML = '<li class="error">Failed to load stations.</li>';
-            elements.stationCount.textContent = 'Error loading stations';
+            elements.stationList.innerHTML = `<li class="error">${t('noStations')}</li>`;
+            elements.stationCount.textContent = t('noStations');
         } finally {
             hideLoadingSkeleton();
         }
@@ -457,11 +640,11 @@
 
         if (stationsToRender.length === 0) {
             if (state.showFavorites) {
-                elements.stationList.innerHTML = '<li class="no-results">No favorite stations yet. Add some from the list!</li>';
+                elements.stationList.innerHTML = `<li class="no-results">${t('noFavorites')}</li>`;
             } else if (state.isSearching) {
-                elements.stationList.innerHTML = '<li class="no-results">No stations found for your search</li>';
+                elements.stationList.innerHTML = `<li class="no-results">${t('noResults')}</li>`;
             } else {
-                elements.stationList.innerHTML = '<li class="error">No stations available</li>';
+                elements.stationList.innerHTML = `<li class="error">${t('noStations')}</li>`;
             }
             return;
         }
@@ -489,7 +672,7 @@
             if (state.isSearching && state.searchQuery) {
                 nameDiv.innerHTML = highlightSearchTerms(station.name, state.searchQuery);
             } else {
-                nameDiv.textContent = station.name || 'Unknown Station';
+                nameDiv.textContent = station.name || t('unknownStation');
             }
 
             const tagsDiv = document.createElement('div');
@@ -527,7 +710,7 @@
             favBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="${isFavorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>`;
-            favBtn.setAttribute('aria-label', isFavorite ? 'Remove from favorites' : 'Add to favorites');
+            favBtn.setAttribute('aria-label', isFavorite ? t('ariaRemoveFavorites') : t('ariaAddFavorites'));
             favBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 toggleFavorite(station);
@@ -564,13 +747,13 @@
     function updateStationCount() {
         if (state.showFavorites) {
             const favCount = state.stations.filter(s => state.favorites.includes(generateId(s))).length;
-            elements.stationCount.textContent = `${favCount} favorites`;
+            elements.stationCount.textContent = `${favCount} ${t('stationCountFavorites')}`;
         } else if (state.isSearching) {
-            elements.stationCount.textContent = `${state.stations.length} of ${state.isGlobalSearch ? state.globalStations.length : state.allStations.length} stations`;
+            elements.stationCount.textContent = `${state.stations.length} ${t('stationCountSearching')} ${state.isGlobalSearch ? state.globalStations.length : state.allStations.length} ${t('stationCount')}`;
         } else if (state.isGlobalSearch) {
-            elements.stationCount.textContent = `${state.stations.length} stations from all categories`;
+            elements.stationCount.textContent = `${state.stations.length} ${t('stationCountAll')}`;
         } else {
-            elements.stationCount.textContent = `${state.stations.length} stations`;
+            elements.stationCount.textContent = `${state.stations.length} ${t('stationCount')}`;
         }
     }
 
@@ -639,7 +822,7 @@
     function updateFavoriteButton() {
         const isFav = state.currentStation && isFavorite(state.currentStation);
         elements.favoriteBtn.classList.toggle('active', isFav);
-        elements.favoriteBtn.setAttribute('aria-label', isFav ? 'Remove from favorites' : 'Add to favorites');
+        elements.favoriteBtn.setAttribute('aria-label', isFav ? t('ariaRemoveFavorites') : t('ariaAddFavorites'));
     }
 
     function showFavorites() {
@@ -647,9 +830,9 @@
         elements.favoritesBtn.classList.toggle('active', state.showFavorites);
 
         if (state.showFavorites) {
-            elements.stationsTitle.textContent = 'Favorites';
+            elements.stationsTitle.textContent = t('sortFavorites').replace('❤️ ', '');
         } else {
-            elements.stationsTitle.textContent = state.currentCategory ? state.currentCategory.name : 'Stations';
+            elements.stationsTitle.textContent = state.currentCategory ? state.currentCategory.name : t('stationsTitle');
         }
 
         renderStations();
@@ -836,7 +1019,7 @@
         highIcon.style.display = state.isMuted ? 'none' : 'block';
         mutedIcon.style.display = state.isMuted ? 'block' : 'none';
 
-        elements.volumeBtn.setAttribute('aria-label', state.isMuted ? 'Unmute' : 'Mute');
+        elements.volumeBtn.setAttribute('aria-label', state.isMuted ? t('ariaUnmute') : t('ariaMute'));
     }
 
     // ==================== UI Updates ====================
@@ -847,8 +1030,8 @@
         state.currentStationIndex = -1;
 
         elements.stationImage.innerHTML = '<div class="placeholder-icon">📻</div>';
-        elements.stationTitle.textContent = 'No station selected';
-        elements.stationMeta.textContent = 'Select a station to start listening';
+        elements.stationTitle.textContent = t('noStationSelected');
+        elements.stationMeta.textContent = t('selectStation');
 
         elements.seekbarContainer.style.display = 'none';
         elements.seekbarProgress.style.width = '0%';
@@ -861,8 +1044,8 @@
     function updatePlayerUI() {
         if (!state.currentStation) return;
 
-        elements.stationTitle.textContent = state.currentStation.name || 'Unknown Station';
-        elements.stationMeta.textContent = state.currentCategory ? state.currentCategory.displayName : 'Unknown Category';
+        elements.stationTitle.textContent = state.currentStation.name || t('unknownStation');
+        elements.stationMeta.textContent = state.currentCategory ? state.currentCategory.displayName : t('unknownCategory');
 
         if (state.currentStation.favicon || state.currentStation.logo) {
             elements.stationImage.innerHTML = '';
@@ -888,11 +1071,11 @@
         if (state.isPlaying) {
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'block';
-            elements.playPauseBtn.setAttribute('aria-label', 'Pause');
+            elements.playPauseBtn.setAttribute('aria-label', t('ariaPause'));
         } else {
             playIcon.style.display = 'block';
             pauseIcon.style.display = 'none';
-            elements.playPauseBtn.setAttribute('aria-label', 'Play');
+            elements.playPauseBtn.setAttribute('aria-label', t('ariaPlay'));
         }
     }
 
@@ -1024,6 +1207,11 @@
         elements.volumeBtn.addEventListener('click', toggleMute);
         elements.seekbar.addEventListener('click', handleSeek);
 
+        // Language selector
+        elements.languageSelect.addEventListener('change', (e) => {
+            changeLanguage(e.target.value);
+        });
+
         elements.searchBtn.addEventListener('click', () => performSearch(elements.searchInput.value));
         elements.searchInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
@@ -1114,6 +1302,11 @@
         state.categorySort = loadFromStorage(CONFIG.STORAGE_KEYS.CATEGORY_SORT, CONFIG.SORT_OPTIONS.ALPHABETICAL);
         state.stationSort = loadFromStorage(CONFIG.STORAGE_KEYS.STATION_SORT, CONFIG.SORT_OPTIONS.ALPHABETICAL);
 
+        // Load saved language or default to English
+        const savedLanguage = loadFromStorage(CONFIG.STORAGE_KEYS.LANGUAGE, 'en');
+        state.currentLanguage = savedLanguage;
+        elements.languageSelect.value = savedLanguage;
+
         if (elements.categorySortSelect) {
             elements.categorySortSelect.value = state.categorySort;
         }
@@ -1125,6 +1318,9 @@
         state.audio.volume = state.volume;
 
         initTheme();
+
+        // Apply translations
+        applyTranslations();
 
         state.categories = parseCategories();
         renderCategories();
