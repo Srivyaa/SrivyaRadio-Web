@@ -72,7 +72,16 @@
             <aside class="categories-panel">
                 <div class="panel-header">
                     <h2>Categories</h2>
-                    <span class="category-count" id="categoryCount">0</span>
+                    <div class="panel-actions">
+                        <span class="category-count" id="categoryCount">0</span>
+                    </div>
+                </div>
+                <div class="sort-container">
+                    <label for="categorySort" class="sort-label">Sort:</label>
+                    <select id="categorySort" class="sort-select">
+                        <option value="alpha">A-Z</option>
+                        <option value="favorites">❤️ Favorites</option>
+                    </select>
                 </div>
                 <ul class="category-list" id="categoryList" role="listbox" aria-label="Radio categories">
                     <!-- Categories loaded dynamically -->
@@ -86,6 +95,11 @@
                         <span class="station-count" id="stationCount">Select a category</span>
                     </div>
                     <div class="stations-actions">
+                        <select id="stationSort" class="sort-select station-sort">
+                            <option value="alpha">A-Z</option>
+                            <option value="favorites">❤️ Favorites</option>
+                            <option value="playcount">🔊 Most Played</option>
+                        </select>
                         <button class="action-btn" id="favoritesBtn" aria-label="Show favorites" title="Favorites">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">

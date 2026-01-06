@@ -14,10 +14,18 @@
             HISTORY: 'srivya_history',
             THEME: 'srivya_theme',
             LAST_PLAYED: 'srivya_last_played',
-            VOLUME: 'srivya_volume'
+            VOLUME: 'srivya_volume',
+            PLAY_COUNTS: 'srivya_play_counts',
+            CATEGORY_SORT: 'srivya_category_sort',
+            STATION_SORT: 'srivya_station_sort'
         },
         MAX_HISTORY: 50,
-        SEARCH_DEBOUNCE: 300
+        SEARCH_DEBOUNCE: 300,
+        SORT_OPTIONS: {
+            ALPHABETICAL: 'alpha',
+            FAVORITES: 'favorites',
+            PLAY_COUNT: 'playcount'
+        }
     };
 
     // ==================== Category Mapping ====================
@@ -96,28 +104,25 @@
         favorites: [],
         history: [],
         historyIndex: -1,
-        loadedCategories: new Set()
+        loadedCategories: new Set(),
+        playCounts: {},
+        categorySort: 'alpha',
+        stationSort: 'alpha',
+        categoriesWithFavorites: new Set()
     };
 
     // ==================== DOM Elements ====================
     const elements = {
-        // Categories
         categoryList: document.getElementById('categoryList'),
         categoryCount: document.getElementById('categoryCount'),
-
-        // Stations
         stationList: document.getElementById('stationList'),
         stationCount: document.getElementById('stationCount'),
         stationsTitle: document.getElementById('stationsTitle'),
-
-        // Search
         searchInput: document.getElementById('searchInput'),
         searchBtn: document.getElementById('searchBtn'),
-
-        // Theme
         themeToggle: document.getElementById('themeToggle'),
-
-        // Player
+        categorySortSelect: document.getElementById('categorySort'),
+        stationSortSelect: document.getElementById('stationSort'),
         stationImage: document.getElementById('stationImage'),
         stationTitle: document.getElementById('stationTitle'),
         stationMeta: document.getElementById('stationMeta'),
@@ -131,14 +136,8 @@
         volumeBtn: document.getElementById('volumeBtn'),
         progressBar: document.getElementById('progressBar'),
         progressFill: document.getElementById('progressFill'),
-
-        // Actions
         favoritesBtn: document.getElementById('favoritesBtn'),
-
-        // Audio
         audioPlayer: document.getElementById('audioPlayer'),
-
-        // Loading
         loadingSkeleton: document.getElementById('loadingSkeleton')
     };
 
@@ -177,6 +176,93 @@
         }
     }
 
+    // ==================== Sort Functions ====================
+    function sortCategories(categories) {
+        const sorted = [...categories];
+
+        switch (state.categorySort) {
+            case CONFIG.SORT_OPTIONS.FAVORITES:
+                sorted.sort((a, b) => {
+                    if (a.isGlobal) return -1;
+                    if (b.isGlobal) return 1;
+                    const aHasFav = state.categoriesWithFavorites.has(a.fileName);
+                    const bHasFav = state.categoriesWithFavorites.has(b.fileName);
+                    if (aHasFav && !bHasFav) return -1;
+                    if (!aHasFav && bHasFav) return 1;
+                    return a.name.localeCompare(b.name);
+                });
+                break;
+            case CONFIG.SORT_OPTIONS.ALPHABETICAL:
+            default:
+                sorted.sort((a, b) => {
+                    if (a.isGlobal) return -1;
+                    if (b.isGlobal) return 1;
+                    return a.name.localeCompare(b.name);
+                });
+                break;
+        }
+
+        return sorted;
+    }
+
+    function sortStations(stations) {
+        const sorted = [...stations];
+
+        switch (state.stationSort) {
+            case CONFIG.SORT_OPTIONS.FAVORITES:
+                sorted.sort((a, b) => {
+                    const aIsFav = state.favorites.includes(generateId(a));
+                    const bIsFav = state.favorites.includes(generateId(b));
+                    if (aIsFav && !bIsFav) return -1;
+                    if (!aIsFav && bIsFav) return 1;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+                break;
+            case CONFIG.SORT_OPTIONS.PLAY_COUNT:
+                sorted.sort((a, b) => {
+                    const aCount = state.playCounts[generateId(a)] || 0;
+                    const bCount = state.playCounts[generateId(b)] || 0;
+                    if (bCount !== aCount) return bCount - aCount;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+                break;
+            case CONFIG.SORT_OPTIONS.ALPHABETICAL:
+            default:
+                sorted.sort((a, b) => {
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+                break;
+        }
+
+        return sorted;
+    }
+
+    function changeCategorySort(sortBy) {
+        state.categorySort = sortBy;
+        saveToStorage(CONFIG.STORAGE_KEYS.CATEGORY_SORT, sortBy);
+        state.categories = sortCategories(state.categories);
+        renderCategories();
+    }
+
+    function changeStationSort(sortBy) {
+        state.stationSort = sortBy;
+        saveToStorage(CONFIG.STORAGE_KEYS.STATION_SORT, sortBy);
+        state.stations = sortStations(state.stations);
+        state.allStations = sortStations(state.allStations);
+        renderStations();
+    }
+
+    // ==================== Play Count Functions ====================
+    function incrementPlayCount(station) {
+        const id = generateId(station);
+        state.playCounts[id] = (state.playCounts[id] || 0) + 1;
+        saveToStorage(CONFIG.STORAGE_KEYS.PLAY_COUNTS, state.playCounts);
+    }
+
+    function getPlayCount(station) {
+        return state.playCounts[generateId(station)] || 0;
+    }
+
     // ==================== Category Functions ====================
     function parseCategories() {
         const allStationsCategory = {
@@ -201,7 +287,8 @@
             };
         });
 
-        return [allStationsCategory, ...categories];
+        const unsortedCategories = [allStationsCategory, ...categories];
+        return sortCategories(unsortedCategories);
     }
 
     function renderCategories() {
@@ -228,6 +315,14 @@
             nameSpan.textContent = category.name;
             li.appendChild(nameSpan);
 
+            // Show favorite indicator
+            if (category.fileName && state.categoriesWithFavorites.has(category.fileName)) {
+                const favIndicator = document.createElement('span');
+                favIndicator.innerHTML = ' ❤️';
+                favIndicator.style.color = 'var(--danger-color)';
+                nameSpan.appendChild(favIndicator);
+            }
+
             li.addEventListener('click', () => selectCategory(category));
             li.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -240,14 +335,6 @@
         });
 
         elements.categoryCount.textContent = state.categories.length;
-    }
-
-    function sortStationsAlphabetically(stations) {
-        return [...stations].sort((a, b) => {
-            const nameA = (a.name || '').toLowerCase();
-            const nameB = (b.name || '').toLowerCase();
-            return nameA.localeCompare(nameB);
-        });
     }
 
     async function selectCategory(category) {
@@ -263,7 +350,6 @@
         renderCategories();
 
         if (category.isGlobal) {
-            // Load all stations from all categories
             await loadAllCategories();
         } else {
             showLoadingSkeleton();
@@ -276,7 +362,7 @@
                 const data = await response.json();
 
                 const stations = Array.isArray(data) ? data : (data.stations || []);
-                state.stations = sortStationsAlphabetically(stations);
+                state.stations = sortStations(stations);
                 state.allStations = [...state.stations];
                 state.loadedCategories.add(category.fileName);
 
@@ -297,7 +383,6 @@
         showLoadingSkeleton();
 
         try {
-            // Load all category files
             const loadPromises = state.categories
                 .filter(cat => !cat.isGlobal)
                 .map(async (cat) => {
@@ -306,8 +391,7 @@
                         if (!response.ok) return [];
                         const data = await response.json();
                         const stations = Array.isArray(data) ? data : (data.stations || []);
-                        // Add category info to each station
-                        return stations.map(s => ({ ...s, _category: cat.displayName }));
+                        return stations.map(s => ({ ...s, _category: cat.displayName, _fileName: cat.fileName }));
                     } catch (error) {
                         console.error(`Error loading ${cat.fileName}:`, error);
                         return [];
@@ -317,9 +401,12 @@
             const results = await Promise.all(loadPromises);
             const allStations = results.flat();
 
-            state.globalStations = sortStationsAlphabetically(allStations);
+            state.globalStations = sortStations(allStations);
             state.stations = [...state.globalStations];
             state.allStations = [...state.stations];
+
+            // Update categories with favorites
+            updateCategoriesWithFavorites();
 
             resetPlayer();
             renderStations();
@@ -331,6 +418,18 @@
         } finally {
             hideLoadingSkeleton();
         }
+    }
+
+    function updateCategoriesWithFavorites() {
+        state.categoriesWithFavorites = new Set();
+        state.favorites.forEach(favId => {
+            // Check if any loaded station in a category is a favorite
+            state.globalStations.forEach(station => {
+                if (generateId(station) === favId && station._fileName) {
+                    state.categoriesWithFavorites.add(station._fileName);
+                }
+            });
+        });
     }
 
     // ==================== Station Functions ====================
@@ -390,6 +489,14 @@
             if (station.language) tags.push(station.language);
             if (station.country) tags.push(station.country);
             if (station._category && state.isGlobalSearch) tags.push(station._category);
+
+            // Add play count if sorting by play count
+            if (state.stationSort === CONFIG.SORT_OPTIONS.PLAY_COUNT) {
+                const playCount = getPlayCount(station);
+                if (playCount > 0) {
+                    tags.push(`🔊 ${playCount}`);
+                }
+            }
 
             if (state.isSearching && state.searchQuery) {
                 tagsDiv.innerHTML = tags.map(tag => highlightSearchTerms(tag, state.searchQuery)).join(' • ');
@@ -462,14 +569,12 @@
         state.isSearching = state.searchQuery.length > 0;
 
         if (!state.isSearching) {
-            // Reset to show all stations
             if (state.isGlobalSearch) {
                 state.stations = [...state.globalStations];
             } else {
                 state.stations = [...state.allStations];
             }
         } else {
-            // Search across all stations
             const stationsToSearch = state.isGlobalSearch ? state.globalStations : state.allStations;
 
             state.stations = stationsToSearch.filter(station => {
@@ -503,6 +608,14 @@
         }
 
         saveToStorage(CONFIG.STORAGE_KEYS.FAVORITES, state.favorites);
+
+        // Update categories with favorites
+        updateCategoriesWithFavorites();
+        if (state.isGlobalSearch) {
+            state.categories = sortCategories(state.categories);
+            renderCategories();
+        }
+
         renderStations();
 
         if (state.currentStation && generateId(state.currentStation) === id) {
@@ -538,13 +651,9 @@
     function addToHistory(station) {
         const id = generateId(station);
 
-        // Remove duplicate
         state.history = state.history.filter(s => generateId(s) !== id);
-
-        // Add to beginning
         state.history.unshift(station);
 
-        // Limit history size
         if (state.history.length > CONFIG.MAX_HISTORY) {
             state.history = state.history.slice(0, CONFIG.MAX_HISTORY);
         }
@@ -569,6 +678,8 @@
 
     function playStation() {
         if (!state.currentStation) return;
+
+        incrementPlayCount(state.currentStation);
 
         state.audio.pause();
 
@@ -596,7 +707,6 @@
                 state.isPlaying = false;
                 updatePlayPauseButton();
 
-                // Auto-play next on error
                 setTimeout(() => {
                     if (state.stations.length > 1) {
                         playNext();
@@ -627,7 +737,6 @@
     function playPrevious() {
         if (state.stations.length === 0) return;
 
-        // If more than 3 seconds in, restart current station
         if (state.audio.currentTime > 3) {
             state.audio.currentTime = 0;
             return;
@@ -769,7 +878,6 @@
     // ==================== Keyboard Shortcuts ====================
     function initKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            // Ignore if typing in input
             if (e.target.tagName === 'INPUT') return;
 
             switch (e.key.toLowerCase()) {
@@ -842,7 +950,6 @@
 
     // ==================== Event Listeners ====================
     function setupEventListeners() {
-        // Control buttons
         elements.playPauseBtn.addEventListener('click', () => {
             if (!state.currentStation) return;
             state.isPlaying ? pauseStation() : playStation();
@@ -858,14 +965,10 @@
             }
         });
 
-        // Volume
         elements.volumeSlider.addEventListener('input', updateVolume);
         elements.volumeBtn.addEventListener('click', toggleMute);
-
-        // Progress bar
         elements.progressBar.addEventListener('click', seek);
 
-        // Search
         elements.searchBtn.addEventListener('click', () => performSearch(elements.searchInput.value));
         elements.searchInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') {
@@ -873,7 +976,6 @@
             }
         });
 
-        // Debounced search
         let searchTimeout;
         elements.searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
@@ -882,13 +984,22 @@
             }, CONFIG.SEARCH_DEBOUNCE);
         });
 
-        // Favorites toggle
         elements.favoritesBtn.addEventListener('click', showFavorites);
-
-        // Theme toggle
         elements.themeToggle.addEventListener('click', toggleTheme);
 
-        // Audio events
+        // Sort listeners
+        if (elements.categorySortSelect) {
+            elements.categorySortSelect.addEventListener('change', (e) => {
+                changeCategorySort(e.target.value);
+            });
+        }
+
+        if (elements.stationSortSelect) {
+            elements.stationSortSelect.addEventListener('change', (e) => {
+                changeStationSort(e.target.value);
+            });
+        }
+
         state.audio.addEventListener('ended', () => {
             if (state.isLooped && state.currentStation) {
                 playStation();
@@ -913,7 +1024,6 @@
             updatePlayPauseButton();
         });
 
-        // Handle single audio playback (pause others)
         document.addEventListener('play', (e) => {
             if (e.target !== state.audio) {
                 const players = document.querySelectorAll('audio, video');
@@ -925,7 +1035,6 @@
             }
         }, true);
 
-        // Only one audio playing at a time
         state.audio.addEventListener('play', () => {
             const otherAudio = document.querySelectorAll('audio:not(#audioPlayer)');
             otherAudio.forEach(audio => {
@@ -938,41 +1047,42 @@
 
     // ==================== Initialization ====================
     async function init() {
-        // Load saved data
         state.favorites = loadFromStorage(CONFIG.STORAGE_KEYS.FAVORITES, []);
         state.history = loadFromStorage(CONFIG.STORAGE_KEYS.HISTORY, []);
         state.volume = loadFromStorage(CONFIG.STORAGE_KEYS.VOLUME, 0.5);
+        state.playCounts = loadFromStorage(CONFIG.STORAGE_KEYS.PLAY_COUNTS, {});
+        state.categorySort = loadFromStorage(CONFIG.STORAGE_KEYS.CATEGORY_SORT, CONFIG.SORT_OPTIONS.ALPHABETICAL);
+        state.stationSort = loadFromStorage(CONFIG.STORAGE_KEYS.STATION_SORT, CONFIG.SORT_OPTIONS.ALPHABETICAL);
 
-        // Apply saved volume
+        if (elements.categorySortSelect) {
+            elements.categorySortSelect.value = state.categorySort;
+        }
+        if (elements.stationSortSelect) {
+            elements.stationSortSelect.value = state.stationSort;
+        }
+
         elements.volumeSlider.value = state.volume * 100;
         state.audio.volume = state.volume;
 
-        // Initialize theme
         initTheme();
 
-        // Initialize categories
         state.categories = parseCategories();
         renderCategories();
 
-        // Setup event listeners
         setupEventListeners();
         initKeyboardShortcuts();
         initServiceWorker();
 
-        // Load last played station if available
         const lastPlayed = loadFromStorage(CONFIG.STORAGE_KEYS.LAST_PLAYED);
         if (lastPlayed && lastPlayed.station) {
-            // Optionally auto-load last category
             console.log('Last played:', lastPlayed.station.name);
         }
 
-        // Load first category by default
         if (state.categories.length > 0) {
             selectCategory(state.categories[0]);
         }
     }
 
-    // Start app when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
