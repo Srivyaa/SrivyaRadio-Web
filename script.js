@@ -1077,7 +1077,9 @@
     }
 
     // ==================== Audio Visualizer Functions ====================
-    function initVisualizer() {
+    function initVisualizerEarly() {
+        // Initialize audio context and source early to prevent audio interruption
+        // when enabling visualizer later. createMediaElementSource can only be called once.
         try {
             state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             state.analyser = state.audioContext.createAnalyser();
@@ -1085,7 +1087,41 @@
             state.analyser.smoothingTimeConstant = 0.8;
             state.dataArray = new Uint8Array(state.analyser.frequencyBinCount);
 
-            // Connect audio element to analyser
+            // Create source from audio element - this must be done before audio starts
+            state.source = state.audioContext.createMediaElementSource(state.audio);
+            state.source.connect(state.analyser);
+            state.analyser.connect(state.audioContext.destination);
+
+            // Resume context if needed
+            if (state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
+            }
+
+            return true;
+        } catch (error) {
+            console.warn('Early visualizer init failed:', error);
+            return false;
+        }
+    }
+
+    function initVisualizer() {
+        try {
+            // Check if already initialized with a source
+            if (state.source) {
+                if (state.audioContext.state === 'suspended') {
+                    state.audioContext.resume();
+                }
+                return true;
+            }
+
+            // Create audio context
+            state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            state.analyser = state.audioContext.createAnalyser();
+            state.analyser.fftSize = 256;
+            state.analyser.smoothingTimeConstant = 0.8;
+            state.dataArray = new Uint8Array(state.analyser.frequencyBinCount);
+
+            // Create source from audio element - can only be done once!
             state.source = state.audioContext.createMediaElementSource(state.audio);
             state.source.connect(state.analyser);
             state.analyser.connect(state.audioContext.destination);
@@ -1100,14 +1136,26 @@
     function startVisualizer() {
         if (!state.visualizerEnabled) return;
 
+        // Initialize audio context if needed
         if (!state.audioContext) {
             if (!initVisualizer()) return;
         }
 
+        // Resume audio context if suspended
         if (state.audioContext.state === 'suspended') {
-            state.audioContext.resume();
+            state.audioContext.resume().catch(err => {
+                console.error('Failed to resume audio context:', err);
+            });
         }
 
+        // Make sure audio is playing
+        if (state.audio.paused) {
+            state.audio.play().catch(err => {
+                console.error('Failed to resume audio:', err);
+            });
+        }
+
+        // Set up canvas
         elements.visualizerCanvas.width = elements.visualizerCanvas.offsetWidth;
         elements.visualizerCanvas.height = elements.visualizerCanvas.offsetHeight;
 
@@ -1119,7 +1167,9 @@
 
             state.animationId = requestAnimationFrame(animate);
 
-            state.analyser.getByteFrequencyData(state.dataArray);
+            if (state.analyser) {
+                state.analyser.getByteFrequencyData(state.dataArray);
+            }
 
             // Clear canvas with gradient background
             const gradient = ctx.createLinearGradient(0, 0, 0, elements.visualizerCanvas.height);
@@ -1129,24 +1179,26 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, elements.visualizerCanvas.width, elements.visualizerCanvas.height);
 
-            switch (style) {
-                case 'bars':
-                    drawBars(ctx);
-                    break;
-                case 'wave':
-                    drawWave(ctx);
-                    break;
-                case 'circular':
-                    drawCircular(ctx);
-                    break;
-                case 'radial':
-                    drawRadial(ctx);
-                    break;
-                case 'particles':
-                    drawParticles(ctx);
-                    break;
-                default:
-                    drawBars(ctx);
+            if (state.analyser && state.dataArray) {
+                switch (style) {
+                    case 'bars':
+                        drawBars(ctx);
+                        break;
+                    case 'wave':
+                        drawWave(ctx);
+                        break;
+                    case 'circular':
+                        drawCircular(ctx);
+                        break;
+                    case 'radial':
+                        drawRadial(ctx);
+                        break;
+                    case 'particles':
+                        drawParticles(ctx);
+                        break;
+                    default:
+                        drawBars(ctx);
+                }
             }
         }
 
