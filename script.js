@@ -134,8 +134,12 @@
         favoriteBtn: document.getElementById('favoriteBtn'),
         volumeSlider: document.getElementById('volumeSlider'),
         volumeBtn: document.getElementById('volumeBtn'),
-        progressBar: document.getElementById('progressBar'),
-        progressFill: document.getElementById('progressFill'),
+        seekbarContainer: document.getElementById('seekbarContainer'),
+        seekbar: document.getElementById('seekbar'),
+        seekbarProgress: document.getElementById('seekbarProgress'),
+        seekbarThumb: document.getElementById('seekbarThumb'),
+        currentTimeEl: document.getElementById('currentTime'),
+        durationEl: document.getElementById('duration'),
         favoritesBtn: document.getElementById('favoritesBtn'),
         audioPlayer: document.getElementById('audioPlayer'),
         loadingSkeleton: document.getElementById('loadingSkeleton')
@@ -174,6 +178,13 @@
             console.warn('Storage not available:', e);
             return defaultValue;
         }
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
     // ==================== Sort Functions ====================
@@ -659,6 +670,51 @@
         saveToStorage(CONFIG.STORAGE_KEYS.HISTORY, state.history);
     }
 
+    // ==================== Seekbar Functions ====================
+    function updateSeekbar() {
+        const { duration, currentTime } = state.audio;
+
+        if (!duration || !isFinite(duration) || isNaN(duration)) {
+            // Hide seekbar for live streams
+            elements.seekbarContainer.style.display = 'none';
+            return;
+        }
+
+        // Show seekbar for seekable media
+        elements.seekbarContainer.style.display = 'flex';
+
+        const progress = (currentTime / duration) * 100;
+        elements.seekbarProgress.style.width = `${progress}%`;
+
+        const thumbPosition = (currentTime / duration) * elements.seekbar.offsetWidth;
+        elements.seekbarThumb.style.left = `${thumbPosition}px`;
+
+        elements.currentTimeEl.textContent = formatTime(currentTime);
+        elements.durationEl.textContent = formatTime(duration);
+    }
+
+    function handleSeek(e) {
+        const rect = elements.seekbar.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        const newTime = percent * state.audio.duration;
+
+        if (!isNaN(newTime) && isFinite(newTime)) {
+            state.audio.currentTime = newTime;
+        }
+    }
+
+    function checkMediaSeekable() {
+        const { duration } = state.audio;
+
+        if (!duration || !isFinite(duration) || isNaN(duration)) {
+            // Hide seekbar for live streams
+            elements.seekbarContainer.style.display = 'none';
+        } else {
+            // Show seekbar for seekable media
+            elements.seekbarContainer.style.display = 'flex';
+        }
+    }
+
     // ==================== Playback Functions ====================
     function selectStation(index) {
         if (index < 0 || index >= state.stations.length) return;
@@ -695,6 +751,7 @@
                 state.isPlaying = true;
                 updatePlayPauseButton();
                 updateMediaSession();
+                checkMediaSeekable();
                 saveToStorage(CONFIG.STORAGE_KEYS.LAST_PLAYED, {
                     station: state.currentStation,
                     category: state.currentCategory
@@ -704,6 +761,7 @@
                 console.error('Error playing station:', error);
                 state.isPlaying = false;
                 updatePlayPauseButton();
+                elements.seekbarContainer.style.display = 'none';
 
                 setTimeout(() => {
                     if (state.stations.length > 1) {
@@ -781,12 +839,6 @@
         elements.volumeBtn.setAttribute('aria-label', state.isMuted ? 'Unmute' : 'Mute');
     }
 
-    function seek(e) {
-        const rect = elements.progressBar.getBoundingClientRect();
-        const percent = (e.clientX - rect.left) / rect.width;
-        state.audio.currentTime = percent * state.audio.duration;
-    }
-
     // ==================== UI Updates ====================
     function resetPlayer() {
         state.audio.pause();
@@ -797,6 +849,11 @@
         elements.stationImage.innerHTML = '<div class="placeholder-icon">📻</div>';
         elements.stationTitle.textContent = 'No station selected';
         elements.stationMeta.textContent = 'Select a station to start listening';
+
+        elements.seekbarContainer.style.display = 'none';
+        elements.seekbarProgress.style.width = '0%';
+        elements.currentTimeEl.textContent = '0:00';
+        elements.durationEl.textContent = '0:00';
 
         updatePlayPauseButton();
     }
@@ -965,7 +1022,7 @@
 
         elements.volumeSlider.addEventListener('input', updateVolume);
         elements.volumeBtn.addEventListener('click', toggleMute);
-        elements.progressBar.addEventListener('click', seek);
+        elements.seekbar.addEventListener('click', handleSeek);
 
         elements.searchBtn.addEventListener('click', () => performSearch(elements.searchInput.value));
         elements.searchInput.addEventListener('keyup', (e) => {
@@ -998,6 +1055,9 @@
             });
         }
 
+        // Audio event listeners
+        state.audio.addEventListener('timeupdate', updateSeekbar);
+        state.audio.addEventListener('loadedmetadata', checkMediaSeekable);
         state.audio.addEventListener('ended', () => {
             if (state.isLooped && state.currentStation) {
                 playStation();
@@ -1010,11 +1070,13 @@
             console.error('Audio playback error');
             state.isPlaying = false;
             updatePlayPauseButton();
+            elements.seekbarContainer.style.display = 'none';
         });
 
         state.audio.addEventListener('play', () => {
             state.isPlaying = true;
             updatePlayPauseButton();
+            checkMediaSeekable();
         });
 
         state.audio.addEventListener('pause', () => {

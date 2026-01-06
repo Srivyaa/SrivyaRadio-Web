@@ -31,6 +31,7 @@
 
     --header-height: 80px;
     --player-height: 90px;
+    --seekbar-height: 40px;
     --sidebar-width: 280px;
 }
 
@@ -91,7 +92,7 @@ input:focus:not(:focus-visible) {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding-bottom: var(--player-height);
+    padding-bottom: calc(var(--player-height) + var(--seekbar-height));
 }
 
 /* Header */
@@ -259,7 +260,7 @@ input:focus:not(:focus-visible) {
     height: fit-content;
     position: sticky;
     top: calc(var(--header-height) + 1rem);
-    max-height: calc(100vh - var(--header-height) - var(--player-height) - 3rem);
+    max-height: calc(100vh - var(--header-height) - var(--player-height) - var(--seekbar-height) - 3rem);
     overflow-y: auto;
 }
 
@@ -429,7 +430,7 @@ input:focus:not(:focus-visible) {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    max-height: calc(100vh - var(--header-height) - var(--player-height) - 180px);
+    max-height: calc(100vh - var(--header-height) - var(--player-height) - var(--seekbar-height) - 180px);
     overflow-y: auto;
 }
 
@@ -549,6 +550,64 @@ input:focus:not(:focus-visible) {
     }
 }
 
+/* Seekbar */
+.seekbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.5rem;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--bg-primary);
+}
+
+.seekbar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    margin: 0 1rem;
+}
+
+.seekbar-progress {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+.seekbar-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.seekbar:hover .seekbar-thumb {
+    opacity: 1;
+}
+
+.seekbar:hover .seekbar-progress {
+    background: var(--primary-dark);
+}
+
+.seekbar-time {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    min-width: 70px;
+    justify-content: flex-end;
+}
+
 /* Player Bar */
 .player-bar {
     position: fixed;
@@ -558,7 +617,6 @@ input:focus:not(:focus-visible) {
     background: var(--bg-secondary);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
     z-index: 100;
-    height: var(--player-height);
 }
 
 .player-content {
@@ -569,7 +627,7 @@ input:focus:not(:focus-visible) {
     margin: 0 auto;
     padding: 0.75rem 1.5rem;
     gap: 1rem;
-    height: 100%;
+    height: var(--player-height);
 }
 
 .player-info {
@@ -741,27 +799,6 @@ input:focus:not(:focus-visible) {
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
 }
 
-.progress-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--bg-tertiary);
-    cursor: pointer;
-}
-
-.progress-fill {
-    height: 100%;
-    background: var(--primary-color);
-    width: 0%;
-    transition: width 0.1s linear;
-}
-
-.progress-bar:hover .progress-fill {
-    background: var(--primary-dark);
-}
-
 /* Footer */
 .main-footer {
     text-align: center;
@@ -875,6 +912,15 @@ input:focus:not(:focus-visible) {
     .volume-slider {
         width: 70px;
     }
+
+    .seekbar-container {
+        padding: 0.4rem 1rem;
+    }
+
+    .seekbar-time {
+        font-size: 0.7rem;
+        min-width: 50px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -906,12 +952,30 @@ input:focus:not(:focus-visible) {
     }
 
     .player-bar {
-        height: 70px;
+        height: var(--player-height);
     }
 
     .station-image {
         width: 48px;
         height: 48px;
+    }
+
+    .seekbar-container {
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.3rem 1rem;
+    }
+
+    .seekbar {
+        margin: 0;
+    }
+
+    .seekbar-time {
+        display: none;
+    }
+
+    .app-container {
+        padding-bottom: calc(var(--player-height) + 30px);
     }
 }
 
