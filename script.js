@@ -79,6 +79,7 @@
         categories: [],
         stations: [],
         allStations: [],
+        globalStations: [],
         currentCategory: null,
         currentStation: null,
         audio: new Audio(),
@@ -90,10 +91,12 @@
         currentStationIndex: -1,
         searchQuery: '',
         isSearching: false,
+        isGlobalSearch: false,
         showFavorites: false,
         favorites: [],
         history: [],
-        historyIndex: -1
+        historyIndex: -1,
+        loadedCategories: new Set()
     };
 
     // ==================== DOM Elements ====================
@@ -176,7 +179,15 @@
 
     // ==================== Category Functions ====================
     function parseCategories() {
-        return CATEGORIES.map(cat => {
+        const allStationsCategory = {
+            name: 'All Stations',
+            fileName: null,
+            displayName: '🌍 All Stations',
+            emoji: '🌍',
+            isGlobal: true
+        };
+
+        const categories = CATEGORIES.map(cat => {
             const parts = cat.displayName.split(' ');
             const emoji = parts[parts.length - 1];
             const name = parts.slice(0, -1).join(' ') || cat.displayName;
@@ -185,9 +196,12 @@
                 name,
                 fileName: cat.fileName,
                 displayName: cat.displayName,
-                emoji
+                emoji,
+                isGlobal: false
             };
         });
+
+        return [allStationsCategory, ...categories];
     }
 
     function renderCategories() {
@@ -228,6 +242,14 @@
         elements.categoryCount.textContent = state.categories.length;
     }
 
+    function sortStationsAlphabetically(stations) {
+        return [...stations].sort((a, b) => {
+            const nameA = (a.name || '').toLowerCase();
+            const nameB = (b.name || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+    }
+
     async function selectCategory(category) {
         state.currentCategory = category;
         state.currentStation = null;
@@ -235,27 +257,76 @@
         state.isSearching = false;
         state.searchQuery = '';
         state.showFavorites = false;
+        state.isGlobalSearch = category.isGlobal;
         elements.searchInput.value = '';
 
         renderCategories();
+
+        if (category.isGlobal) {
+            // Load all stations from all categories
+            await loadAllCategories();
+        } else {
+            showLoadingSkeleton();
+
+            try {
+                const response = await fetch(`${CONFIG.BASE_URL}${category.fileName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+
+                const stations = Array.isArray(data) ? data : (data.stations || []);
+                state.stations = sortStationsAlphabetically(stations);
+                state.allStations = [...state.stations];
+                state.loadedCategories.add(category.fileName);
+
+                resetPlayer();
+                renderStations();
+                updateStationCount();
+            } catch (error) {
+                console.error(`Error loading stations for ${category.name}:`, error);
+                elements.stationList.innerHTML = '<li class="error">Failed to load stations. Please try again.</li>';
+                elements.stationCount.textContent = 'Error loading stations';
+            } finally {
+                hideLoadingSkeleton();
+            }
+        }
+    }
+
+    async function loadAllCategories() {
         showLoadingSkeleton();
 
         try {
-            const response = await fetch(`${CONFIG.BASE_URL}${category.fileName}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+            // Load all category files
+            const loadPromises = state.categories
+                .filter(cat => !cat.isGlobal)
+                .map(async (cat) => {
+                    try {
+                        const response = await fetch(`${CONFIG.BASE_URL}${cat.fileName}`);
+                        if (!response.ok) return [];
+                        const data = await response.json();
+                        const stations = Array.isArray(data) ? data : (data.stations || []);
+                        // Add category info to each station
+                        return stations.map(s => ({ ...s, _category: cat.displayName }));
+                    } catch (error) {
+                        console.error(`Error loading ${cat.fileName}:`, error);
+                        return [];
+                    }
+                });
 
-            state.stations = Array.isArray(data) ? data : (data.stations || []);
+            const results = await Promise.all(loadPromises);
+            const allStations = results.flat();
+
+            state.globalStations = sortStationsAlphabetically(allStations);
+            state.stations = [...state.globalStations];
             state.allStations = [...state.stations];
 
             resetPlayer();
             renderStations();
             updateStationCount();
         } catch (error) {
-            console.error(`Error loading stations for ${category.name}:`, error);
-            elements.stationList.innerHTML = '<li class="error">Failed to load stations. Please try again.</li>';
+            console.error('Error loading all categories:', error);
+            elements.stationList.innerHTML = '<li class="error">Failed to load stations.</li>';
             elements.stationCount.textContent = 'Error loading stations';
         } finally {
             hideLoadingSkeleton();
@@ -318,6 +389,7 @@
             if (station.genre) tags.push(station.genre);
             if (station.language) tags.push(station.language);
             if (station.country) tags.push(station.country);
+            if (station._category && state.isGlobalSearch) tags.push(station._category);
 
             if (state.isSearching && state.searchQuery) {
                 tagsDiv.innerHTML = tags.map(tag => highlightSearchTerms(tag, state.searchQuery)).join(' • ');
@@ -376,7 +448,9 @@
             const favCount = state.stations.filter(s => state.favorites.includes(generateId(s))).length;
             elements.stationCount.textContent = `${favCount} favorites`;
         } else if (state.isSearching) {
-            elements.stationCount.textContent = `${state.stations.length} of ${state.allStations.length} stations`;
+            elements.stationCount.textContent = `${state.stations.length} of ${state.isGlobalSearch ? state.globalStations.length : state.allStations.length} stations`;
+        } else if (state.isGlobalSearch) {
+            elements.stationCount.textContent = `${state.stations.length} stations from all categories`;
         } else {
             elements.stationCount.textContent = `${state.stations.length} stations`;
         }
@@ -388,18 +462,28 @@
         state.isSearching = state.searchQuery.length > 0;
 
         if (!state.isSearching) {
-            state.stations = [...state.allStations];
+            // Reset to show all stations
+            if (state.isGlobalSearch) {
+                state.stations = [...state.globalStations];
+            } else {
+                state.stations = [...state.allStations];
+            }
         } else {
-            state.stations = state.allStations.filter(station => {
+            // Search across all stations
+            const stationsToSearch = state.isGlobalSearch ? state.globalStations : state.allStations;
+
+            state.stations = stationsToSearch.filter(station => {
                 const name = (station.name || '').toLowerCase();
                 const genre = (station.genre || '').toLowerCase();
                 const language = (station.language || '').toLowerCase();
                 const country = (station.country || '').toLowerCase();
+                const category = (station._category || '').toLowerCase();
 
                 return name.includes(state.searchQuery) ||
                     genre.includes(state.searchQuery) ||
                     language.includes(state.searchQuery) ||
-                    country.includes(state.searchQuery);
+                    country.includes(state.searchQuery) ||
+                    category.includes(state.searchQuery);
             });
         }
 
