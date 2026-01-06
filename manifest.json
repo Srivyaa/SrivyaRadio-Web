@@ -1,22 +1,130 @@
 {
-    "name": "Srivya Radio",
-    "short_name": "Srivya Radio",
-    "description": "Modern player for Tamil radio and TV streams",
-    "start_url": ".",
+    "name": "SrivyaRadio",
+    "short_name": "SrivyaRadio",
+    "description": "Browse and listen to radio stations from around the world. Tamil, Indian, and international radio streams.",
+    "start_url": "./",
+    "scope": "./",
     "display": "standalone",
+    "orientation": "portrait-primary",
     "background_color": "#f4f4f4",
     "theme_color": "#667eea",
-    "orientation": "portrait-primary",
+    "categories": [
+        "entertainment",
+        "music",
+        "radio"
+    ],
+    "lang": "en-US",
+    "dir": "ltr",
+    "prefer_related_applications": false,
     "icons": [
         {
             "src": "icons/icon.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "icons/icon.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
-    ]
+    ],
+    "shortcuts": [
+        {
+            "name": "Favorites",
+            "short_name": "Favorites",
+            "description": "View your favorite stations",
+            "url": "./?view=favorites",
+            "icons": [
+                {
+                    "src": "icons/icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Tamil Stations",
+            "short_name": "Tamil",
+            "description": "Browse Tamil radio stations",
+            "url": "./?category=tamil",
+            "icons": [
+                {
+                    "src": "icons/icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "icons/icon.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "SrivyaRadio main interface"
+        },
+        {
+            "src": "icons/icon.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "SrivyaRadio mobile interface"
+        }
+    ],
+    "related_applications": [],
+    "display_override": [
+        "window-controls-overlay",
+        "standalone",
+        "browser"
+    ],
+    "edge_side_panel": {
+        "preferred_width": 400
+    },
+    "share_target": {
+        "action": "./share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
 }

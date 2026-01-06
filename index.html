@@ -1,987 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SrivyaRadio - Browse and listen to radio stations from around the world">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>SrivyaRadio - Adaptive Radio Player</title>
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --dark-color: #2c3e50;
-            --light-color: #ecf0f1;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            color: var(--light-color);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: rgba(44, 62, 80, 0.8);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--light-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-        }
-
-        .description {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .search-container {
-            flex: 1;
-            min-width: 300px;
-            max-width: 500px;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 15px;
-            border: none;
-            border-radius: 30px;
-            background-color: rgba(255, 255, 255, 0.9);
-            font-size: 1rem;
-            color: var(--dark-color);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
-        }
-
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 5px;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .search-btn:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .main-content {
-                flex-direction: row;
-            }
-        }
-
-        .categories {
-            flex: 1;
-            background-color: rgba(44, 62, 80, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .categories h2 {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .category-list {
-            list-style-type: none;
-        }
-
-        .category-item {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background-color: rgba(52, 152, 219, 0.2);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .category-item:hover {
-            background-color: rgba(52, 152, 219, 0.4);
-            transform: translateX(5px);
-        }
-
-        .category-item.active {
-            background-color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .category-emoji {
-            font-size: 1.2rem;
-        }
-
-        .stations {
-            flex: 2;
-            background-color: rgba(44, 62, 80, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .stations-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .stations h2 {
-            margin: 0;
-        }
-
-        .station-count {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .station-list {
-            list-style-type: none;
-        }
-
-        .station-item {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background-color: rgba(52, 152, 219, 0.2);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .station-item:hover {
-            background-color: rgba(52, 152, 219, 0.4);
-        }
-
-        .station-item.playing {
-            background-color: var(--primary-color);
-            font-weight: bold;
-        }
-
-        .station-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .station-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .station-tags {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .player {
-            background-color: rgba(44, 62, 80, 0.9);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            margin-top: 20px;
-        }
-
-        .now-playing {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .station-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 10px;
-            background-color: var(--dark-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .station-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .station-image .placeholder {
-            font-size: 3rem;
-            opacity: 0.5;
-        }
-
-        .station-details {
-            text-align: center;
-        }
-
-        .station-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .station-category {
-            opacity: 0.8;
-            font-size: 1rem;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .control-btn {
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .control-btn:hover {
-            background-color: var(--secondary-color);
-            transform: scale(1.1);
-        }
-
-        .control-btn.play-pause {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-        }
-
-        .control-btn.active {
-            background-color: var(--success-color);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .volume-slider {
-            width: 150px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
-        }
-
-        .error {
-            text-align: center;
-            padding: 20px;
-            color: var(--danger-color);
-            font-size: 1.2rem;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 20px;
-            color: var(--warning-color);
-            font-size: 1.2rem;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        /* Search results styling */
-        .search-highlight {
-            background-color: var(--warning-color);
-            color: var(--dark-color);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-    </style>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon.png">
+    <link rel="apple-touch-icon" href="icons/icon.png">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <div class="logo">
-                    <img src="https://raw.githubusercontent.com/Srivyaa/RadioStations-old/main/ic_radiologo.png" alt="SrivyaRadio Logo">
+    <div class="app-container">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="https://raw.githubusercontent.com/Srivyaa/RadioStations-old/main/ic_radiologo.png"
+                            alt="SrivyaRadio Logo" width="60" height="60" loading="lazy">
+                    </div>
+                    <div class="brand-text">
+                        <h1>SrivyaRadio</h1>
+                        <p class="description">Browse and listen to radio stations from around the world</p>
+                    </div>
                 </div>
-                <div class="brand-text">
-                    <h1>SrivyaRadio</h1>
-                    <p class="description">Browse and listen to radio stations from around the world</p>
-                </div>
-            </div>
-            <div class="search-container">
-                <div class="search-box">
-                    <input type="text" class="search-input" id="searchInput" placeholder="Search for stations...">
-                    <button class="search-btn" id="searchBtn">
-                        🔍
+
+                <div class="header-controls">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search stations..."
+                                aria-label="Search radio stations" autocomplete="off">
+                            <button class="search-btn" id="searchBtn" aria-label="Search">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="M21 21l-4.35-4.35"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"
+                        title="Toggle dark mode">
+                        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
         </header>
 
-        <div class="main-content">
-            <div class="categories">
-                <h2>Categories</h2>
-                <ul class="category-list" id="categoryList">
-                    <li class="loading">Loading categories...</li>
-                </ul>
-            </div>
-
-            <div class="stations">
-                <div class="stations-header">
-                    <h2>Stations</h2>
-                    <div class="station-count" id="stationCount">Select a category</div>
+        <main class="main-content">
+            <aside class="categories-panel">
+                <div class="panel-header">
+                    <h2>Categories</h2>
+                    <span class="category-count" id="categoryCount">0</span>
                 </div>
-                <ul class="station-list" id="stationList">
-                    <li class="loading">Select a category to view stations</li>
+                <ul class="category-list" id="categoryList" role="listbox" aria-label="Radio categories">
+                    <!-- Categories loaded dynamically -->
                 </ul>
+            </aside>
+
+            <section class="stations-section">
+                <div class="section-header">
+                    <div class="stations-info">
+                        <h2 id="stationsTitle">Stations</h2>
+                        <span class="station-count" id="stationCount">Select a category</span>
+                    </div>
+                    <div class="stations-actions">
+                        <button class="action-btn" id="favoritesBtn" aria-label="Show favorites" title="Favorites">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <ul class="station-list" id="stationList" role="listbox" aria-label="Radio stations">
+                    <!-- Stations loaded dynamically -->
+                </ul>
+                <div class="loading-skeleton" id="loadingSkeleton" aria-hidden="true">
+                    <!-- Skeleton loaders -->
+                </div>
+            </section>
+        </main>
+
+        <div class="player-bar" id="playerBar">
+            <div class="player-content">
+                <div class="player-info">
+                    <div class="station-image" id="stationImage">
+                        <div class="placeholder-icon">📻</div>
+                    </div>
+                    <div class="station-details">
+                        <h3 class="station-title" id="stationTitle">No station selected</h3>
+                        <p class="station-meta" id="stationMeta">Select a station to start listening</p>
+                    </div>
+                </div>
+
+                <div class="player-controls">
+                    <button class="control-btn" id="shuffleBtn" aria-label="Shuffle" title="Shuffle">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="16 3 21 3 21 8"></polyline>
+                            <line x1="4" y1="20" x2="21" y2="3"></line>
+                            <polyline points="21 16 21 21 16 21"></polyline>
+                            <line x1="15" y1="15" x2="21" y2="21"></line>
+                            <line x1="4" y1="4" x2="9" y2="9"></line>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="prevBtn" aria-label="Previous" title="Previous">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                            <line x1="5" y1="19" x2="5" y2="5"></line>
+                        </svg>
+                    </button>
+                    <button class="control-btn play-btn" id="playPauseBtn" aria-label="Play" title="Play">
+                        <svg class="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <svg class="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                            style="display:none">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="nextBtn" aria-label="Next" title="Next">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                            <line x1="19" y1="5" x2="19" y2="19"></line>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="loopBtn" aria-label="Loop" title="Loop">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="17 1 21 5 17 9"></polyline>
+                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                            <polyline points="7 23 3 19 7 15"></polyline>
+                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="player-extras">
+                    <button class="favorite-btn" id="favoriteBtn" aria-label="Add to favorites"
+                        title="Add to favorites">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="volume-control">
+                        <button class="volume-btn" id="volumeBtn" aria-label="Mute" title="Mute/Unmute">
+                            <svg class="icon-volume-high" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            </svg>
+                            <svg class="icon-volume-muted" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" style="display:none">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <line x1="23" y1="9" x2="17" y2="15"></line>
+                                <line x1="17" y1="9" x2="23" y2="15"></line>
+                            </svg>
+                        </button>
+                        <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider"
+                            aria-label="Volume">
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
 
-        <div class="player">
-            <div class="now-playing">
-                <div class="station-image">
-                    <div class="placeholder">📻</div>
-                </div>
-                <div class="station-details">
-                    <div class="station-title">No station selected</div>
-                    <div class="station-category">Select a station to start listening</div>
-                </div>
-            </div>
-
-            <div class="controls">
-                <button class="control-btn shuffle" title="Shuffle">
-                    🔀
-                </button>
-                <button class="control-btn previous" title="Previous">
-                    ⏮
-                </button>
-                <button class="control-btn play-pause" title="Play">
-                    ▶
-                </button>
-                <button class="control-btn next" title="Next">
-                    ⏭
-                </button>
-                <button class="control-btn loop" title="Loop">
-                    🔁
-                </button>
-            </div>
-
-            <div class="volume-control">
-                <span>🔈</span>
-                <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider">
-                <span>🔊</span>
-            </div>
-        </div>
-
-        <footer>
-            <p>Radio data sourced from <a href="https://github.com/Srivyaa/RadioStations" target="_blank" style="color: var(--light-color);">Srivyaa/RadioStations</a></p>
+        <footer class="main-footer">
+            <p>Radio data sourced from <a href="https://github.com/Srivyaa/RadioStations" target="_blank"
+                    rel="noopener">Srivyaa/RadioStations</a></p>
         </footer>
     </div>
 
-    <script>
-        // Base URL for the JSON files
-        const BASE_URL = 'https://raw.githubusercontent.com/Srivyaa/RadioStations/main/data/';
-        
-        // Custom categories mapping based on the provided pairs
-        const CUSTOM_CATEGORIES = [
-            { displayName: "All_India_Radios 🇮🇳", fileName: "india.json" },
-            { displayName: "Actor_Radios 🎭", fileName: "actor.json" },
-            { displayName: "Ajith_Radios 🎬", fileName: "ajith.json" },
-            { displayName: "Amma_Radios 👵", fileName: "amma.json" },
-            { displayName: "Appa_Radios 👨‍👧‍👦", fileName: "appa.json" },
-            { displayName: "Arjun_Radios 🦁", fileName: "arjun.json" },
-            { displayName: "Captain_Radios 🕶️", fileName: "captain.json" },
-            { displayName: "Amman_Radio 🕉️", fileName: "amman.json" },
-            { displayName: "Artist_Radios 🎤", fileName: "artist.json" },
-            { displayName: "Christian_Radios ✝️", fileName: "CHRIST.json" },
-            { displayName: "Community_Radios 🏘️", fileName: "community.json" },
-            { displayName: "Classic_Radios 🎻", fileName: "classic.json" },
-            { displayName: "Deva_Radios 🎵", fileName: "deva.json" },
-            { displayName: "English_Radios 🇬🇧", fileName: "english.json" },
-            { displayName: "Ganapathy_Radios 🐘", fileName: "ganapathy.json" },
-            { displayName: "Hindu_Radio 🕉️", fileName: "hindu.json" },
-            { displayName: "Hindi_Radios 🇮🇳", fileName: "hindi.json" },
-            { displayName: "JR_Radios 🦸", fileName: "jr.json" },
-            { displayName: "Islam_Radios ☪️", fileName: "islam.json" },
-            { displayName: "Kamal_Radios 🎭", fileName: "kamal.json" },
-            { displayName: "Kids_Radios 👶", fileName: "kids.json" },
-            { displayName: "Kutties_Radios 👶", fileName: "kutties.json" },
-            { displayName: "Local_Radios 📍", fileName: "local.json" },
-            { displayName: "Local_TV ▶️", fileName: "localtv.json" },
-            { displayName: "MP3 🎵", fileName: "mp3.json" },
-            { displayName: "Music_Radio 🎵", fileName: "music.json" },
-            { displayName: "Manisharma_Radios 🎶", fileName: "manisharma.json" },
-            { displayName: "Mass_Radios 💥", fileName: "mass.json" },
-            { displayName: "Mohan_Radios 🎤", fileName: "mohan.json" },
-            { displayName: "Perumal_Songs 🕉️", fileName: "perumal.json" },
-            { displayName: "Pongal_Specials 🎉", fileName: "pongal.json" },
-            { displayName: "Prasanth_Radios 🎵", fileName: "prasanth.json" },
-            { displayName: "Prithishaa_Radios 🌟", fileName: "prithishaa.json" },
-            { displayName: "Rajini_Radios 👑", fileName: "rajini.json" },
-            { displayName: "Ramarajan_Radios 🎤", fileName: "ramarajan.json" },
-            { displayName: "SA Rajkumar_Radios 🎭", fileName: "sarajkumar.json" },
-            { displayName: "Sirpy_Radios 🎵", fileName: "sirpy.json" },
-            { displayName: "SV_Sekar_Dramas 🎭", fileName: "svs.json" },
-            { displayName: "Tamil_FM_Radios 🇮🇳", fileName: "tamilfm.json" },
-            { displayName: "Tamil_TV_Channels 📺", fileName: "tamiltv.json" },
-            { displayName: "Tamil_Talk_Radios 💬", fileName: "tamiltalk.json" },
-            { displayName: "TMS_Murugan_Songs 🕉️", fileName: "tms.json" },
-            { displayName: "TR_Hits_Radios 🔥", fileName: "trhits.json" },
-            { displayName: "TV_Serials 🎵", fileName: "serials.json" },
-            { displayName: "Unplugged_Radios 🎸", fileName: "unplugged.json" },
-            { displayName: "Vikram_Radios 🦹", fileName: "vikram.json" },
-            { displayName: "🏹 Mahabharat_Radios", fileName: "mahabharat.json" },
-            { displayName: "▶️ YouTube", fileName: "youtube.json" },
-            { displayName: "🇮🇳 India", fileName: "in.json" },
-            { displayName: "🇮🇪 Ireland", fileName: "ie.json" }
-        ];
-
-        // Global state
-        const state = {
-            categories: [],
-            stations: [],
-            allStations: [],
-            currentCategory: null,
-            currentStation: null,
-            audio: new Audio(),
-            isPlaying: false,
-            isShuffled: false,
-            isLooped: false,
-            volume: 0.5,
-            currentStationIndex: -1,
-            searchQuery: '',
-            isSearching: false
-        };
-
-        // DOM elements
-        const categoryList = document.getElementById('categoryList');
-        const stationList = document.getElementById('stationList');
-        const stationCount = document.getElementById('stationCount');
-        const stationImage = document.querySelector('.station-image');
-        const stationTitle = document.querySelector('.station-title');
-        const stationCategory = document.querySelector('.station-category');
-        const playPauseBtn = document.querySelector('.play-pause');
-        const prevBtn = document.querySelector('.previous');
-        const nextBtn = document.querySelector('.next');
-        const shuffleBtn = document.querySelector('.shuffle');
-        const loopBtn = document.querySelector('.loop');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-
-        // Initialize the app
-        async function init() {
-            await loadCategories();
-            setupEventListeners();
-        }
-
-        // Load all categories from the custom mapping
-        async function loadCategories() {
-            try {
-                categoryList.innerHTML = '<li class="loading">Loading categories...</li>';
-                
-                // Use the custom categories mapping
-                state.categories = CUSTOM_CATEGORIES.map(cat => {
-                    // Extract emoji and name
-                    const parts = cat.displayName.split(' ');
-                    const emoji = parts[parts.length - 1];
-                    const name = parts.slice(0, -1).join(' ') || cat.displayName;
-                    
-                    return {
-                        name: name,
-                        fileName: cat.fileName,
-                        displayName: cat.displayName,
-                        emoji: emoji
-                    };
-                });
-
-                renderCategories();
-            } catch (error) {
-                console.error('Error loading categories:', error);
-                categoryList.innerHTML = '<li class="error">Failed to load categories</li>';
-            }
-        }
-
-        // Render categories in the UI
-        function renderCategories() {
-            categoryList.innerHTML = '';
-            
-            state.categories.forEach(category => {
-                const li = document.createElement('li');
-                li.className = 'category-item';
-                if (state.currentCategory && state.currentCategory.name === category.name) {
-                    li.classList.add('active');
-                }
-                
-                // Add emoji if available
-                if (category.emoji) {
-                    const emojiSpan = document.createElement('span');
-                    emojiSpan.className = 'category-emoji';
-                    emojiSpan.textContent = category.emoji;
-                    li.appendChild(emojiSpan);
-                }
-                
-                // Add category name
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = category.name;
-                li.appendChild(nameSpan);
-                
-                li.addEventListener('click', () => selectCategory(category));
-                categoryList.appendChild(li);
-            });
-        }
-
-        // Select a category and load its stations
-        async function selectCategory(category) {
-            state.currentCategory = category;
-            state.currentStation = null;
-            state.currentStationIndex = -1;
-            state.isSearching = false;
-            state.searchQuery = '';
-            searchInput.value = '';
-            
-            // Update UI
-            renderCategories();
-            stationList.innerHTML = '<li class="loading">Loading stations...</li>';
-            
-            try {
-                const response = await fetch(`${BASE_URL}${category.fileName}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                
-                // Extract stations from the JSON structure
-                state.stations = Array.isArray(data) ? data : (data.stations || []);
-                state.allStations = [...state.stations];
-                
-                // Reset player UI
-                resetPlayer();
-                renderStations();
-                updateStationCount();
-            } catch (error) {
-                console.error(`Error loading stations for ${category.name}:`, error);
-                stationList.innerHTML = '<li class="error">Failed to load stations</li>';
-                stationCount.textContent = 'Error loading stations';
-            }
-        }
-
-        // Render stations in the UI
-        function renderStations() {
-            stationList.innerHTML = '';
-            
-            if (state.stations.length === 0) {
-                if (state.isSearching) {
-                    stationList.innerHTML = '<li class="no-results">No stations found for your search</li>';
-                } else {
-                    stationList.innerHTML = '<li class="error">No stations available</li>';
-                }
-                return;
-            }
-            
-            state.stations.forEach((station, index) => {
-                const li = document.createElement('li');
-                li.className = 'station-item';
-                if (state.currentStation && state.currentStation.name === station.name) {
-                    li.classList.add('playing');
-                }
-                
-                const stationInfo = document.createElement('div');
-                stationInfo.className = 'station-info';
-                
-                const nameDiv = document.createElement('div');
-                nameDiv.className = 'station-name';
-                
-                // Highlight search terms if searching
-                if (state.isSearching && state.searchQuery) {
-                    nameDiv.innerHTML = highlightSearchTerms(station.name, state.searchQuery);
-                } else {
-                    nameDiv.textContent = station.name || 'Unknown Station';
-                }
-                
-                const tagsDiv = document.createElement('div');
-                tagsDiv.className = 'station-tags';
-                
-                // Create tags from available station properties
-                const tags = [];
-                if (station.genre) tags.push(station.genre);
-                if (station.language) tags.push(station.language);
-                if (station.country) tags.push(station.country);
-                
-                // Highlight search terms in tags if searching
-                if (state.isSearching && state.searchQuery) {
-                    tagsDiv.innerHTML = tags.map(tag => highlightSearchTerms(tag, state.searchQuery)).join(' • ');
-                } else {
-                    tagsDiv.textContent = tags.join(' • ');
-                }
-                
-                stationInfo.appendChild(nameDiv);
-                stationInfo.appendChild(tagsDiv);
-                
-                li.appendChild(stationInfo);
-                li.addEventListener('click', () => selectStation(index));
-                stationList.appendChild(li);
-            });
-        }
-
-        // Highlight search terms in text
-        function highlightSearchTerms(text, query) {
-            if (!text || !query) return text;
-            
-            const regex = new RegExp(`(${query})`, 'gi');
-            return text.replace(regex, '<span class="search-highlight">$1</span>');
-        }
-
-        // Update station count display
-        function updateStationCount() {
-            if (state.isSearching) {
-                stationCount.textContent = `${state.stations.length} of ${state.allStations.length} stations`;
-            } else {
-                stationCount.textContent = `${state.stations.length} stations`;
-            }
-        }
-
-        // Perform search across all stations
-        function performSearch(query) {
-            state.searchQuery = query.trim().toLowerCase();
-            state.isSearching = state.searchQuery.length > 0;
-            
-            if (!state.isSearching) {
-                // Reset to show all stations
-                state.stations = [...state.allStations];
-            } else {
-                // Filter stations based on search query
-                state.stations = state.allStations.filter(station => {
-                    const name = (station.name || '').toLowerCase();
-                    const genre = (station.genre || '').toLowerCase();
-                    const language = (station.language || '').toLowerCase();
-                    const country = (station.country || '').toLowerCase();
-                    
-                    return name.includes(state.searchQuery) || 
-                           genre.includes(state.searchQuery) || 
-                           language.includes(state.searchQuery) || 
-                           country.includes(state.searchQuery);
-                });
-            }
-            
-            renderStations();
-            updateStationCount();
-        }
-
-        // Select a station to play
-        function selectStation(index) {
-            if (index < 0 || index >= state.stations.length) return;
-            
-            state.currentStationIndex = index;
-            state.currentStation = state.stations[index];
-            
-            // Update UI
-            renderStations();
-            updatePlayerUI();
-            
-            // Play the station
-            playStation();
-        }
-
-        // Play the current station
-        function playStation() {
-            if (!state.currentStation) return;
-            
-            // Stop current audio
-            state.audio.pause();
-            
-            // Get the stream URL
-            const streamUrl = state.currentStation.streamUrl || state.currentStation.url;
-            if (!streamUrl) {
-                console.error('No stream URL available for this station');
-                return;
-            }
-            
-            // Set up and play the audio
-            state.audio.src = streamUrl;
-            state.audio.volume = state.volume;
-            state.audio.play()
-                .then(() => {
-                    state.isPlaying = true;
-                    updatePlayPauseButton();
-                })
-                .catch(error => {
-                    console.error('Error playing station:', error);
-                    state.isPlaying = false;
-                    updatePlayPauseButton();
-                });
-        }
-
-        // Pause the current station
-        function pauseStation() {
-            state.audio.pause();
-            state.isPlaying = false;
-            updatePlayPauseButton();
-        }
-
-        // Play the next station
-        function playNext() {
-            if (state.stations.length === 0) return;
-            
-            let nextIndex;
-            if (state.isShuffled) {
-                nextIndex = Math.floor(Math.random() * state.stations.length);
-            } else {
-                nextIndex = (state.currentStationIndex + 1) % state.stations.length;
-            }
-            
-            selectStation(nextIndex);
-        }
-
-        // Play the previous station
-        function playPrevious() {
-            if (state.stations.length === 0) return;
-            
-            let prevIndex;
-            if (state.isShuffled) {
-                prevIndex = Math.floor(Math.random() * state.stations.length);
-            } else {
-                prevIndex = state.currentStationIndex - 1;
-                if (prevIndex < 0) prevIndex = state.stations.length - 1;
-            }
-            
-            selectStation(prevIndex);
-        }
-
-        // Toggle shuffle
-        function toggleShuffle() {
-            state.isShuffled = !state.isShuffled;
-            shuffleBtn.classList.toggle('active', state.isShuffled);
-        }
-
-        // Toggle loop
-        function toggleLoop() {
-            state.isLooped = !state.isLooped;
-            state.audio.loop = state.isLooped;
-            loopBtn.classList.toggle('active', state.isLooped);
-        }
-
-        // Update volume
-        function updateVolume() {
-            state.volume = volumeSlider.value / 100;
-            state.audio.volume = state.volume;
-        }
-
-        // Reset player UI
-        function resetPlayer() {
-            state.audio.pause();
-            state.isPlaying = false;
-            state.currentStation = null;
-            state.currentStationIndex = -1;
-            
-            stationImage.innerHTML = '<div class="placeholder">📻</div>';
-            stationTitle.textContent = 'No station selected';
-            stationCategory.textContent = 'Select a station to start listening';
-            
-            updatePlayPauseButton();
-        }
-
-        // Update player UI with current station info
-        function updatePlayerUI() {
-            if (!state.currentStation) return;
-            
-            stationTitle.textContent = state.currentStation.name || 'Unknown Station';
-            stationCategory.textContent = state.currentCategory ? state.currentCategory.displayName : 'Unknown Category';
-            
-            // Update station image if available
-            if (state.currentStation.favicon || state.currentStation.logo) {
-                stationImage.innerHTML = '';
-                const img = document.createElement('img');
-                img.src = state.currentStation.favicon || state.currentStation.logo;
-                img.alt = state.currentStation.name;
-                img.onerror = () => {
-                    stationImage.innerHTML = '<div class="placeholder">📻</div>';
-                };
-                stationImage.appendChild(img);
-            } else {
-                stationImage.innerHTML = '<div class="placeholder">📻</div>';
-            }
-            
-            updatePlayPauseButton();
-        }
-
-        // Update play/pause button
-        function updatePlayPauseButton() {
-            if (state.isPlaying) {
-                playPauseBtn.innerHTML = '⏸';
-                playPauseBtn.title = 'Pause';
-            } else {
-                playPauseBtn.innerHTML = '▶';
-                playPauseBtn.title = 'Play';
-            }
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Control buttons
-            playPauseBtn.addEventListener('click', () => {
-                if (!state.currentStation) return;
-                
-                if (state.isPlaying) {
-                    pauseStation();
-                } else {
-                    playStation();
-                }
-            });
-            
-            prevBtn.addEventListener('click', playPrevious);
-            nextBtn.addEventListener('click', playNext);
-            shuffleBtn.addEventListener('click', toggleShuffle);
-            loopBtn.addEventListener('click', toggleLoop);
-            
-            // Volume control
-            volumeSlider.addEventListener('input', updateVolume);
-            
-            // Search functionality
-            searchBtn.addEventListener('click', () => {
-                performSearch(searchInput.value);
-            });
-            
-            searchInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    performSearch(searchInput.value);
-                }
-            });
-            
-            // Real-time search as user types (with debounce)
-            let searchTimeout;
-            searchInput.addEventListener('input', () => {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    performSearch(searchInput.value);
-                }, 300);
-            });
-            
-            // Audio events
-            state.audio.addEventListener('ended', () => {
-                if (state.isLooped && state.currentStation) {
-                    playStation();
-                } else {
-                    playNext();
-                }
-            });
-            
-            state.audio.addEventListener('error', () => {
-                console.error('Error playing audio stream');
-                // Try to play next station on error
-                setTimeout(playNext, 2000);
-            });
-        }
-
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
+    <audio id="audioPlayer" preload="none"></audio>
+    <script src="script.js"></script>
 </body>
+
 </html>
