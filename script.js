@@ -236,7 +236,6 @@
         analyser: null,
         dataArray: null,
         source: null,
-        gainNode: null,
         animationId: null
     };
 
@@ -1088,20 +1087,10 @@
             state.analyser.smoothingTimeConstant = 0.8;
             state.dataArray = new Uint8Array(state.analyser.frequencyBinCount);
 
-            // Create gain node for controlling audio output
-            state.gainNode = state.audioContext.createGain();
-
             // Create source from audio element - this must be done before audio starts
             state.source = state.audioContext.createMediaElementSource(state.audio);
-
-            // Connect source -> analyser -> gain -> destination
-            // This allows both visualization AND audio playback
             state.source.connect(state.analyser);
-            state.analyser.connect(state.gainNode);
-            state.gainNode.connect(state.audioContext.destination);
-
-            // Set initial gain based on volume
-            state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
+            state.analyser.connect(state.audioContext.destination);
 
             // Resume context if needed
             if (state.audioContext.state === 'suspended') {
@@ -1140,20 +1129,13 @@
             state.analyser.smoothingTimeConstant = 0.8;
             state.dataArray = new Uint8Array(state.analyser.frequencyBinCount);
 
-            // Create gain node for controlling audio output
-            state.gainNode = state.audioContext.createGain();
-
             // Create source from audio element - can only be done once!
             state.source = state.audioContext.createMediaElementSource(state.audio);
 
-            // Connect source -> analyser -> gain -> destination
+            // Connect source -> analyser -> destination
             // This allows both visualization AND audio playback
             state.source.connect(state.analyser);
-            state.analyser.connect(state.gainNode);
-            state.gainNode.connect(state.audioContext.destination);
-
-            // Set initial gain based on volume
-            state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
+            state.analyser.connect(state.audioContext.destination);
 
             return true;
         } catch (error) {
@@ -1181,12 +1163,8 @@
             }
         };
 
-        // Resume context and ensure audio is playing with proper gain
+        // Resume context and ensure audio is playing
         resumeContext().then(() => {
-            // Ensure gain is set properly for audio to be heard
-            if (state.gainNode) {
-                state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
-            }
             // Make sure audio is playing if it should be
             if (state.isPlaying && state.audio.paused) {
                 state.audio.play().catch(err => {
@@ -1451,17 +1429,6 @@
                 elements.visualizerCanvas.width = elements.visualizerCanvas.offsetWidth;
                 elements.visualizerCanvas.height = elements.visualizerCanvas.offsetHeight;
             }, 10);
-
-            // Ensure audio context is initialized and gain is set
-            if (!state.audioContext) {
-                initVisualizerEarly();
-            }
-
-            // Ensure gain is set properly for audio to be heard
-            if (state.gainNode) {
-                state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
-            }
-
             if (state.isPlaying) {
                 startVisualizer();
             }
@@ -1651,20 +1618,12 @@
     function updateVolume() {
         state.volume = parseFloat(elements.volumeSlider.value) / 100;
         state.audio.volume = state.isMuted ? 0 : state.volume;
-        // Also update gain node if visualizer is initialized
-        if (state.gainNode) {
-            state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
-        }
         saveToStorage(CONFIG.STORAGE_KEYS.VOLUME, state.volume);
     }
 
     function toggleMute() {
         state.isMuted = !state.isMuted;
         state.audio.volume = state.isMuted ? 0 : state.volume;
-        // Also update gain node if visualizer is initialized
-        if (state.gainNode) {
-            state.gainNode.gain.value = state.isMuted ? 0 : state.volume;
-        }
 
         const highIcon = elements.volumeBtn.querySelector('.icon-volume-high');
         const mutedIcon = elements.volumeBtn.querySelector('.icon-volume-muted');
@@ -2015,10 +1974,6 @@
 
         elements.volumeSlider.value = state.volume * 100;
         state.audio.volume = state.volume;
-
-        // Initialize visualizer early before any audio starts playing
-        // This prevents audio interruption when enabling visualizer later
-        initVisualizerEarly();
 
         initTheme();
 
