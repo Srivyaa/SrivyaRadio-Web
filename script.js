@@ -1491,12 +1491,7 @@
                 state.isPlaying = false;
                 updatePlayPauseButton();
                 elements.seekbarContainer.style.display = 'none';
-
-                setTimeout(() => {
-                    if (state.stations.length > 1) {
-                        playNext();
-                    }
-                }, 2000);
+                // Auto-skip disabled - user can manually select next station
             });
     }
 
